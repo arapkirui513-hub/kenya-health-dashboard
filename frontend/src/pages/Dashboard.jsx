@@ -25,6 +25,7 @@ function Dashboard() {
   const [facilityTypes, setFacilityTypes] = useState([])
   const [counties, setCounties] = useState([])
   const [services, setServices] = useState([])
+  const [serviceGapScores, setServiceGapScores] = useState([])
   const [facilities, setFacilities] = useState([])
   const [facilityTotal, setFacilityTotal] = useState(0)
 
@@ -47,6 +48,7 @@ function Dashboard() {
       axios.get(`${API_BASE}/facility-types`),
       axios.get(`${API_BASE}/counties`),
       axios.get(`${API_BASE}/services`),
+      axios.get(`${API_BASE}/service-gap-score`),
     ])
       .then(
         ([
@@ -55,12 +57,14 @@ function Dashboard() {
           facilityTypesResponse,
           countiesResponse,
           servicesResponse,
+          serviceGapResponse,
         ]) => {
           setSummary(summaryResponse.data)
           setOwnership(ownershipResponse.data)
           setFacilityTypes(facilityTypesResponse.data)
           setCounties(countiesResponse.data)
           setServices(servicesResponse.data)
+          setServiceGapScores(serviceGapResponse.data)
           setLoading(false)
         }
       )
@@ -97,6 +101,7 @@ function Dashboard() {
 
   const topCounties = counties.slice(0, 10)
   const bottomCounties = counties.slice(-5).reverse()
+  const lowestServiceCoverage = serviceGapScores.slice(0, 10)
 
   const nationalServices = services.reduce(
     (totals, county) => {
@@ -147,24 +152,24 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b bg-white">
-  <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-    <div>
-      <h1 className="text-2xl font-bold text-slate-900">
-        Kenya Health Facilities Dashboard
-      </h1>
-      <p className="mt-1 text-sm text-slate-600">
-        Explore facility distribution, ownership, and service availability across Kenya.
-      </p>
-    </div>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Kenya Health Facilities Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Explore facility distribution, ownership, and service availability across Kenya.
+            </p>
+          </div>
 
-    <Link
-      to="/map"
-      className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
-    >
-      County Map
-    </Link>
-  </div>
-</header>
+          <Link
+            to="/map"
+            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
+          >
+            County Map
+          </Link>
+        </div>
+      </header>
 
       <main className="mx-auto max-w-6xl px-6 py-8">
         {loading && (
@@ -428,6 +433,32 @@ function Dashboard() {
 
             <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-slate-900">
+                Lowest Service Coverage Scores
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Average percentage of facilities offering FP, IPD, HBC, C-IMCI and ART.
+                Lower scores may indicate broader service availability gaps.
+              </p>
+
+              <div className="mt-6 h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={lowestServiceCoverage}
+                    layout="vertical"
+                    margin={{ top: 10, right: 30, left: 40, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" domain={[0, 100]} />
+                    <YAxis dataKey="county" type="category" width={130} />
+                    <Tooltip />
+                    <Bar dataKey="coverage_score" fill="#047857" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+
+            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900">
                 Key Findings
               </h3>
 
@@ -453,8 +484,8 @@ function Dashboard() {
                 />
 
                 <FindingCard
-                  title="Potential service gaps"
-                  text="Some counties show low ART service availability compared with their total number of facilities."
+                  title="Multi-service coverage gaps"
+                  text="The service coverage score highlights counties where selected services are less widely available across existing facilities."
                 />
 
                 <FindingCard

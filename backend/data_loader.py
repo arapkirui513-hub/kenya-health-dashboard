@@ -116,6 +116,44 @@ def get_service_breakdown():
 
     return service_data.to_dict(orient="records")
 
+def get_service_gap_score():
+    service_data = pd.DataFrame(get_service_breakdown())
+
+    service_columns = ["fp", "ipd", "hbc", "c_imci", "art"]
+
+    for column in service_columns:
+        service_data[f"{column}_coverage"] = (
+            service_data[column] / service_data["total"] * 100
+        ).round(1)
+
+    service_data["coverage_score"] = (
+        service_data[
+            [
+                "fp_coverage",
+                "ipd_coverage",
+                "hbc_coverage",
+                "c_imci_coverage",
+                "art_coverage",
+            ]
+        ]
+        .mean(axis=1)
+        .round(1)
+    )
+
+    service_data = service_data.sort_values("coverage_score", ascending=True)
+
+    return service_data[
+        [
+            "county",
+            "total",
+            "fp_coverage",
+            "ipd_coverage",
+            "hbc_coverage",
+            "c_imci_coverage",
+            "art_coverage",
+            "coverage_score",
+        ]
+    ].to_dict(orient="records")
 
 def apply_facility_filters(
     source_df,

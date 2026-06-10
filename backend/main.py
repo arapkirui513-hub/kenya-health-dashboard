@@ -12,6 +12,7 @@ from data_loader import (
     get_service_breakdown,
     get_facilities,
     get_facilities_export,
+    get_service_gap_score,
 )
 
 app = FastAPI(
@@ -22,7 +23,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://kenya-health-dashboard.vercel.app",
+        "http://localhost:5173",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -57,6 +61,9 @@ def counties():
 def services():
     return get_service_breakdown()
 
+@app.get("/service-gap-score")
+def service_gap_score():
+    return get_service_gap_score()
 
 @app.get("/facilities/export")
 def export_facilities(
