@@ -14,7 +14,7 @@ import {
   CartesianGrid,
 } from "recharts"
 
-const API_BASE = "http://localhost:8000"
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000"
 
 const COLORS = ["#047857", "#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#064e3b"]
 
