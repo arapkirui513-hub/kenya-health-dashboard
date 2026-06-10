@@ -133,6 +133,11 @@ kenya-health-dashboard/
 │   │   └── main.jsx
 │   └── package.json
 │
+├── screenshots/
+│   ├── dashboard-overview.png
+│   ├── county-map.png
+│   └── county-detail.png
+│
 └── README.md
 ```
 
@@ -157,28 +162,15 @@ kenya-health-dashboard/
 
 ### Dashboard Overview
 
-Add screenshot:
-
-```md
 ![Dashboard Overview](./screenshots/dashboard-overview.png)
-```
 
 ### County Map
 
-Add screenshot:
-
-```md
 ![County Map](./screenshots/county-map.png)
-```
 
 ### County Detail Panel
 
-Add screenshot:
-
-```md
 ![County Detail](./screenshots/county-detail.png)
-```
-
 ---
 
 ## Key Insights
