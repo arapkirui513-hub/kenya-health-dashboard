@@ -38,6 +38,7 @@ The dashboard helps answer questions such as:
 - What facility categories are most common?
 - How widely available are key healthcare services?
 - Which counties show potential ART service gaps?
+- Which counties have the lowest overall healthcare service coverage?
 - How are facilities distributed geographically across Kenya?
 - Can facilities be searched, filtered, and exported for further analysis?
 
@@ -62,6 +63,7 @@ The project was developed as a portfolio-ready full-stack data analytics applica
 - Counties with the fewest facilities
 - Service availability comparison chart
 - ART service gap analysis
+- Multi-service coverage score analysis
 
 ### Facility Finder
 
@@ -153,6 +155,7 @@ kenya-health-dashboard/
 | `/facility-types` | Facility category breakdown |
 | `/counties` | County-level facility statistics |
 | `/services` | County service availability |
+| `/service-gap-score` | Multi-service county coverage scoring |
 | `/facilities` | Searchable and paginated facility records |
 | `/facilities/export` | CSV export for filtered facilities |
 
@@ -171,6 +174,7 @@ kenya-health-dashboard/
 ### County Detail Panel
 
 ![County Detail](./screenshots/county-detail.png)
+
 ---
 
 ## Key Insights
@@ -182,6 +186,8 @@ Some examples from the analysis include:
 - Private ownership contributes substantially to healthcare provision.
 - Service availability varies considerably across counties.
 - ART coverage is uneven and highlights potential planning opportunities.
+- Counties such as Kirinyaga, Meru, Nyeri, and Kiambu show relatively low multi-service coverage scores despite having substantial facility counts.
+- Facility quantity alone does not necessarily indicate broad healthcare service availability.
 
 ---
 
@@ -230,12 +236,12 @@ http://localhost:5173
 
 ## Future Enhancements
 
-- County multi-service coverage scoring
 - Additional healthcare access indicators
 - Advanced geographic analysis
 - Downloadable PDF reports
 - Facility trend analysis
 - Enhanced filtering and comparisons
+- County planning-priority index combining facility counts and service coverage
 
 ---
 
