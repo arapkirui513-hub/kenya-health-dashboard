@@ -32,6 +32,9 @@ function App() {
   const [selectedOwnership, setSelectedOwnership] = useState("")
   const [selectedFacilityType, setSelectedFacilityType] = useState("")
 
+  const [page, setPage] = useState(1)
+  const [pageSize] = useState(10)
+
   const [loading, setLoading] = useState(true)
   const [facilityLoading, setFacilityLoading] = useState(false)
   const [error, setError] = useState("")
@@ -70,8 +73,8 @@ function App() {
     setFacilityLoading(true)
 
     const params = {
-      page: 1,
-      page_size: 10,
+      page,
+      page_size: pageSize,
     }
 
     if (search) params.search = search
@@ -89,7 +92,7 @@ function App() {
       .catch(() => {
         setFacilityLoading(false)
       })
-  }, [search, selectedCounty, selectedOwnership, selectedFacilityType])
+  }, [search, selectedCounty, selectedOwnership, selectedFacilityType, page, pageSize])
 
   const topCounties = counties.slice(0, 10)
   const bottomCounties = counties.slice(-5).reverse()
@@ -123,6 +126,10 @@ function App() {
     }))
     .sort((a, b) => a.coverage - b.coverage)
     .slice(0, 5)
+
+  const totalPages = Math.ceil(facilityTotal / pageSize)
+  const startResult = facilityTotal === 0 ? 0 : (page - 1) * pageSize + 1
+  const endResult = Math.min(page * pageSize, facilityTotal)
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -448,14 +455,20 @@ function App() {
                 <input
                   type="text"
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value)
+                    setPage(1)
+                  }}
                   placeholder="Search facility name..."
                   className="rounded-lg border px-3 py-2 text-sm"
                 />
 
                 <select
                   value={selectedCounty}
-                  onChange={(event) => setSelectedCounty(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedCounty(event.target.value)
+                    setPage(1)
+                  }}
                   className="rounded-lg border px-3 py-2 text-sm"
                 >
                   <option value="">All counties</option>
@@ -468,7 +481,10 @@ function App() {
 
                 <select
                   value={selectedOwnership}
-                  onChange={(event) => setSelectedOwnership(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedOwnership(event.target.value)
+                    setPage(1)
+                  }}
                   className="rounded-lg border px-3 py-2 text-sm"
                 >
                   <option value="">All ownership</option>
@@ -481,7 +497,10 @@ function App() {
 
                 <select
                   value={selectedFacilityType}
-                  onChange={(event) => setSelectedFacilityType(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedFacilityType(event.target.value)
+                    setPage(1)
+                  }}
                   className="rounded-lg border px-3 py-2 text-sm"
                 >
                   <option value="">All facility categories</option>
@@ -495,7 +514,8 @@ function App() {
 
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-sm text-slate-500">
-                  Showing first 10 of {facilityTotal.toLocaleString()} matching facilities.
+                  Showing {startResult.toLocaleString()}–{endResult.toLocaleString()} of{" "}
+                  {facilityTotal.toLocaleString()} matching facilities.
                 </p>
 
                 <button
@@ -504,6 +524,7 @@ function App() {
                     setSelectedCounty("")
                     setSelectedOwnership("")
                     setSelectedFacilityType("")
+                    setPage(1)
                   }}
                   className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                 >
@@ -558,6 +579,32 @@ function App() {
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t pt-4 sm:flex-row">
+                <p className="text-sm text-slate-500">
+                  Page {page} of {totalPages || 1}
+                </p>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+                    disabled={page === 1}
+                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setPage((currentPage) => Math.min(currentPage + 1, totalPages || 1))
+                    }
+                    disabled={page >= totalPages}
+                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             </section>
           </>
