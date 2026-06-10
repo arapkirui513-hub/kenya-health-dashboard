@@ -18,9 +18,17 @@ The dashboard answers beginner-friendly public health and data analysis question
 
 The project is designed as a portfolio-ready full-stack data dashboard using a cleaned Excel dataset as the data source.
 
+## Repository
+
+https://github.com/arapkirui513-hub/kenya-health-dashboard
+
 ## Live Demo
 
-Coming soon.
+Frontend dashboard: https://kenya-health-dashboard.vercel.app/
+
+Backend API: https://kenya-health-dashboard-api.onrender.com/
+
+API documentation: https://kenya-health-dashboard-api.onrender.com/docs
 
 ## Screenshot
 
