@@ -1,0 +1,43 @@
+# Python virtual environments
+venv/
+backend/venv/
+.env
+.env.*
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Node dependencies
+node_modules/
+frontend/node_modules/
+
+# Frontend build output
+dist/
+frontend/dist/
+
+# Vite environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# OneDrive temporary files
+*.tmp
+~$*
+
+# Optional data ignore rules
+# Uncomment these only if you do not want to upload the dataset
+# backend/data/*.xlsx
+# backend/data/*.xls
+# backend/data/*.csv
