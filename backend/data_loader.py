@@ -17,26 +17,16 @@ def get_summary():
 
 
 def get_ownership_breakdown():
-    ownership_counts = (
-        df["Ownership Category"]
-        .value_counts()
-        .reset_index()
-    )
-
+    ownership_counts = df["Ownership Category"].value_counts().reset_index()
     ownership_counts.columns = ["category", "count"]
-
     return ownership_counts.to_dict(orient="records")
 
+
 def get_facility_type_breakdown():
-    facility_type_counts = (
-        df["Facility Category"]
-        .value_counts()
-        .reset_index()
-    )
-
+    facility_type_counts = df["Facility Category"].value_counts().reset_index()
     facility_type_counts.columns = ["category", "count"]
-
     return facility_type_counts.to_dict(orient="records")
+
 
 def get_county_breakdown():
     county_group = (
@@ -51,27 +41,25 @@ def get_county_breakdown():
             columns="Ownership Category",
             values="Facility Code",
             aggfunc="count",
-            fill_value=0
+            fill_value=0,
         )
         .reset_index()
     )
 
-    county_data = county_group.merge(
-        ownership_pivot,
-        on="County",
-        how="left"
-    )
+    county_data = county_group.merge(ownership_pivot, on="County", how="left")
 
-    county_data = county_data.rename(columns={
-        "County": "county",
-        "Province": "province",
-        "Public": "public",
-        "Private": "private",
-        "Faith-Based": "faith_based",
-        "NGO": "ngo",
-        "Community": "community",
-        "Academic": "academic",
-    })
+    county_data = county_data.rename(
+        columns={
+            "County": "county",
+            "Province": "province",
+            "Public": "public",
+            "Private": "private",
+            "Faith-Based": "faith_based",
+            "NGO": "ngo",
+            "Community": "community",
+            "Academic": "academic",
+        }
+    )
 
     expected_columns = [
         "county",
@@ -93,6 +81,7 @@ def get_county_breakdown():
     county_data = county_data.sort_values("total", ascending=False)
 
     return county_data.to_dict(orient="records")
+
 
 def get_service_breakdown():
     service_columns = {
@@ -119,31 +108,24 @@ def get_service_breakdown():
             .rename(columns={original_column: clean_name})
         )
 
-        service_data = service_data.merge(
-            service_counts,
-            on="County",
-            how="left"
-        )
+        service_data = service_data.merge(service_counts, on="County", how="left")
 
-    service_data = service_data.rename(columns={
-        "County": "county"
-    })
-
+    service_data = service_data.rename(columns={"County": "county"})
     service_data = service_data.fillna(0)
     service_data = service_data.sort_values("total", ascending=False)
 
     return service_data.to_dict(orient="records")
 
-def get_facilities(
+
+def apply_facility_filters(
+    source_df,
     county=None,
     ownership=None,
     facility_type=None,
     status=None,
     search=None,
-    page=1,
-    page_size=20
 ):
-    filtered_df = df.copy()
+    filtered_df = source_df.copy()
 
     if county:
         filtered_df = filtered_df[
@@ -172,6 +154,27 @@ def get_facilities(
             .str.contains(search.lower(), na=False)
         ]
 
+    return filtered_df
+
+
+def get_facilities(
+    county=None,
+    ownership=None,
+    facility_type=None,
+    status=None,
+    search=None,
+    page=1,
+    page_size=20,
+):
+    filtered_df = apply_facility_filters(
+        df,
+        county=county,
+        ownership=ownership,
+        facility_type=facility_type,
+        status=status,
+        search=search,
+    )
+
     total = len(filtered_df)
 
     start = (page - 1) * page_size
@@ -192,16 +195,18 @@ def get_facilities(
 
     results_df = results_df[columns_to_return].copy()
 
-    results_df = results_df.rename(columns={
-        "Facility Code": "facility_code",
-        "Facility Name": "facility_name",
-        "County": "county",
-        "District": "district",
-        "Facility Category": "facility_category",
-        "Ownership Category": "ownership_category",
-        "Beds": "beds",
-        "Operational Status": "operational_status",
-    })
+    results_df = results_df.rename(
+        columns={
+            "Facility Code": "facility_code",
+            "Facility Name": "facility_name",
+            "County": "county",
+            "District": "district",
+            "Facility Category": "facility_category",
+            "Ownership Category": "ownership_category",
+            "Beds": "beds",
+            "Operational Status": "operational_status",
+        }
+    )
 
     results_df = results_df.fillna("")
 
@@ -209,5 +214,38 @@ def get_facilities(
         "total": total,
         "page": page,
         "page_size": page_size,
-        "results": results_df.to_dict(orient="records")
+        "results": results_df.to_dict(orient="records"),
     }
+
+
+def get_facilities_export(
+    county=None,
+    ownership=None,
+    facility_type=None,
+    status=None,
+    search=None,
+):
+    filtered_df = apply_facility_filters(
+        df,
+        county=county,
+        ownership=ownership,
+        facility_type=facility_type,
+        status=status,
+        search=search,
+    )
+
+    columns_to_export = [
+        "Facility Code",
+        "Facility Name",
+        "County",
+        "District",
+        "Facility Category",
+        "Ownership Category",
+        "Beds",
+        "Operational Status",
+    ]
+
+    export_df = filtered_df[columns_to_export].copy()
+    export_df = export_df.fillna("")
+
+    return export_df

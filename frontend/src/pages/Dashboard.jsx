@@ -132,6 +132,18 @@ function Dashboard() {
   const startResult = facilityTotal === 0 ? 0 : (page - 1) * pageSize + 1
   const endResult = Math.min(page * pageSize, facilityTotal)
 
+  const handleExport = () => {
+    const params = new URLSearchParams()
+
+    if (search) params.append("search", search)
+    if (selectedCounty) params.append("county", selectedCounty)
+    if (selectedOwnership) params.append("ownership", selectedOwnership)
+    if (selectedFacilityType) params.append("facility_type", selectedFacilityType)
+
+    const url = `${API_BASE}/facilities/export?${params.toString()}`
+    window.open(url, "_blank")
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b bg-white">
@@ -522,24 +534,33 @@ function Dashboard() {
                 </select>
               </div>
 
-              <div className="mt-4 flex items-center justify-between">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-slate-500">
                   Showing {startResult.toLocaleString()}–{endResult.toLocaleString()} of{" "}
                   {facilityTotal.toLocaleString()} matching facilities.
                 </p>
 
-                <button
-                  onClick={() => {
-                    setSearch("")
-                    setSelectedCounty("")
-                    setSelectedOwnership("")
-                    setSelectedFacilityType("")
-                    setPage(1)
-                  }}
-                  className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  Clear filters
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleExport}
+                    className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+                  >
+                    ↓ Export CSV
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setSearch("")
+                      setSelectedCounty("")
+                      setSelectedOwnership("")
+                      setSelectedFacilityType("")
+                      setPage(1)
+                    }}
+                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Clear filters
+                  </button>
+                </div>
               </div>
 
               <div className="mt-6 overflow-x-auto">
