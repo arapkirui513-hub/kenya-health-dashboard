@@ -37,6 +37,15 @@ def home():
     return {"message": "Kenya Health Facilities API is running"}
 
 
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "service": "Kenya Health Facilities Dashboard API",
+        "version": "v1.0.0",
+    }
+
+
 @app.get("/summary")
 def summary():
     return get_summary()
