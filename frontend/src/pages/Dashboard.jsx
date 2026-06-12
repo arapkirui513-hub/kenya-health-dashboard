@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
+import AccessDensitySection from "../components/AccessDensitySection"
 import {
   PieChart,
   Pie,
@@ -494,6 +495,8 @@ function Dashboard() {
                 />
               </div>
             </section>
+            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm"></section>
+            <AccessDensitySection apiBase={API_BASE} />
 
             <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-slate-900">
