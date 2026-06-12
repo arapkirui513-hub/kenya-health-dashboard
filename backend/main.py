@@ -13,6 +13,8 @@ from data_loader import (
     get_facilities,
     get_facilities_export,
     get_service_gap_score,
+    get_population_data,
+    get_access_density,
 )
 
 app = FastAPI(
@@ -73,6 +75,17 @@ def services():
 @app.get("/service-gap-score")
 def service_gap_score():
     return get_service_gap_score()
+
+
+@app.get("/population")
+def population():
+    return get_population_data()
+
+
+@app.get("/access-density")
+def access_density():
+    return get_access_density()
+
 
 @app.get("/facilities/export")
 def export_facilities(
