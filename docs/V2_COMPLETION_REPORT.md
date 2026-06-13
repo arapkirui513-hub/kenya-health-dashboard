@@ -10,6 +10,12 @@ Live dashboard:
 https://kenya-health-dashboard.vercel.app/
 ```
 
+County Explorer:
+
+```text
+https://kenya-health-dashboard.vercel.app/county-explorer
+```
+
 Backend API:
 
 ```text
@@ -26,7 +32,7 @@ https://github.com/arapkirui513-hub/kenya-health-dashboard
 
 ## Version 2 Summary
 
-Version 2 expands the Kenya Health Facilities Dashboard from descriptive facility analytics into population-adjusted healthcare access analysis.
+Version 2 expands the Kenya Health Facilities Dashboard from descriptive facility analytics into population-adjusted healthcare access analysis and county-level comparison.
 
 Version 1 answered:
 
@@ -40,11 +46,31 @@ Version 2 now helps answer:
 How does facility availability compare to population size?
 ```
 
-This makes the dashboard more useful for county comparison, healthcare planning, public health analysis, and portfolio review.
+Version 2 also adds county-level planning interpretation through the County Explorer and County Insight Briefs.
+
+This makes the dashboard more useful for:
+
+```text
+county comparison
+healthcare planning
+public health analysis
+portfolio review
+non-technical planning discussions
+```
 
 ---
 
 ## V2 Features Completed
+
+Completed Version 2 tasks:
+
+```text
+V2 Task 1: Population-Adjusted Access
+V2 Task 2: County Explorer Comparison Tool
+V2 Task 3: County Insight Briefs
+```
+
+---
 
 ## Task 1: Population-Adjusted Access
 
@@ -241,6 +267,83 @@ Added a `County Explorer` navigation button beside the existing `County Map` but
 
 ---
 
+## Task 3: County Insight Briefs
+
+### Objective
+
+Add short written interpretations to the County Explorer page so users can understand what the selected county comparison means.
+
+This turns the County Explorer from a metrics display into a planning interpretation tool.
+
+### Frontend Component Added
+
+Created:
+
+```text
+frontend/src/components/CountyInsightBrief.jsx
+```
+
+The component generates three planning notes:
+
+```text
+Facility access
+Geography context
+Service coverage
+```
+
+### Placement
+
+The County Insight Brief appears on the County Explorer page between:
+
+```text
+summary cards
+comparison metrics table
+```
+
+### What the Brief Explains
+
+The brief helps users interpret:
+
+```text
+which county has stronger facility density
+how land area and population density affect access interpretation
+which county has stronger selected service coverage
+```
+
+### Example Insight
+
+```text
+Nairobi has higher facility density than Turkana, while Turkana has the larger land area. This suggests that geographic access may remain a planning issue even when facility-per-population metrics are compared directly.
+```
+
+### Value Added
+
+County Insight Briefs make the dashboard easier to understand for non-technical users by translating numeric differences into planning language.
+
+This improves the dashboard for:
+
+```text
+planning discussions
+portfolio review
+public health storytelling
+county-level comparison
+stakeholder communication
+```
+
+### Testing
+
+Confirmed:
+
+```text
+County Insight Brief appears on the County Explorer page
+Insight text updates when selected counties change
+Same-county guard still works
+Comparison metrics table still works
+Production build passes
+```
+
+---
+
 ## County Explorer Metrics
 
 The County Explorer compares counties using the following groups.
@@ -324,6 +427,23 @@ Murang'a
 Murang'A
 ```
 
+### Derived Insight Text
+
+County Insight Briefs are generated from the selected county data already available inside the County Explorer.
+
+No new backend endpoint was needed.
+
+The insight brief uses:
+
+```text
+facility density
+land area
+population density
+overall service coverage score
+```
+
+This keeps the feature simple, fast, and frontend-only.
+
 ---
 
 ## Testing Completed
@@ -335,6 +455,8 @@ Confirmed locally:
 Nairobi vs Turkana loads by default
 Dropdown selectors show county options
 Summary cards render correctly
+County Insight Brief renders correctly
+County Insight Brief updates when selected counties change
 Metrics table renders correctly
 Same-county guard works
 Higher-value highlighting works
@@ -369,6 +491,7 @@ Completed:
 ```text
 V2 Task 1: Population-Adjusted Access
 V2 Task 2: County Explorer Comparison Tool
+V2 Task 3: County Insight Briefs
 ```
 
 The dashboard now supports:
@@ -380,13 +503,14 @@ Population-adjusted facility access
 County-to-county comparison
 Ownership mix analysis
 Service coverage comparison
+Plain-language county insight briefs
 ```
 
 ---
 
 ## Impact
 
-Version 2 makes the project stronger because it moves from simple counting to access analysis.
+Version 2 makes the project stronger because it moves from simple counting to access analysis and planning interpretation.
 
 The dashboard can now support questions such as:
 
@@ -395,6 +519,7 @@ Which counties have fewer facilities relative to population size?
 Which counties have stronger public facility availability?
 How do two counties compare across facility access and service coverage?
 Where might population size and geographic spread affect healthcare access?
+What does a county comparison mean in simple planning language?
 ```
 
 This improves the project for:
@@ -405,6 +530,7 @@ county comparison
 public health storytelling
 portfolio demonstration
 data analytics review
+non-technical stakeholder communication
 ```
 
 ---
@@ -414,15 +540,51 @@ data analytics review
 Recommended next task:
 
 ```text
-V2 Task 3: County Insight Briefs
+V2 Task 4: Downloadable County Comparison Reports
 ```
 
-This would add short written interpretations to the County Explorer page.
+This would allow users to export a selected county comparison as a PDF or printable report.
 
-Example:
+The report could include:
 
 ```text
-Nairobi has a higher facility density than Turkana, while Turkana has a much larger land area and lower population density. This suggests that geographic access challenges may remain important even when facility-per-population metrics appear close.
+selected counties
+summary cards
+County Insight Brief
+comparison metrics table
+timestamp
+dashboard links
 ```
 
-This would help non-technical users understand what the numbers mean.
+This would make the County Explorer more useful for:
+
+```text
+team presentations
+planning discussions
+portfolio demonstration
+offline review
+public health reporting
+```
+
+---
+
+## Release Notes
+
+### v2.0.0
+
+Released:
+
+```text
+Population-Adjusted Access
+County Explorer Comparison Tool
+```
+
+### Post-Release V2 Enhancement
+
+Added after the `v2.0.0` release:
+
+```text
+County Insight Briefs
+```
+
+This enhancement extends the County Explorer with plain-language planning interpretations for selected county comparisons.

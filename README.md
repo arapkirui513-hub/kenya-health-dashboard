@@ -354,6 +354,7 @@ Initial full-stack dashboard release with facility distribution, ownership analy
 
 ### v2.0.0
 
+- County Insight Briefs that translate selected county comparisons into plain-language planning notes
 Population-adjusted access analysis and County Explorer comparison tool.
 
 Completed:
@@ -366,11 +367,16 @@ Completed:
 * Side-by-side county comparison tool
 * V2 screenshots and completion report
 
+### Post-Release V2 Enhancement
+
+After the `v2.0.0` release, the County Explorer was extended with **County Insight Briefs**.
+
+This feature adds short planning interpretations below the county comparison summary cards. The briefs explain facility access, geography context, and service coverage differences between the selected counties.
+
 ---
 
 ## Future Enhancements
 
-* County Insight Briefs
 * Downloadable county comparison reports
 * Advanced geographic access indicators
 * Facility trend analysis
