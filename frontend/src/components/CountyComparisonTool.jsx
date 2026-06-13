@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react"
+import { Fragment, useMemo, useState } from "react"
+import CountyInsightBrief from "./CountyInsightBrief"
 
 const normalizeCounty = (name = "") =>
   name
@@ -26,9 +27,12 @@ const formatRate = (value) => {
 
 const formatDecimal = (value) => {
   const number = toNumber(value)
-  return number === null ? "—" : number.toLocaleString(undefined, {
-    maximumFractionDigits: 1,
-  })
+
+  return number === null
+    ? "—"
+    : number.toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+      })
 }
 
 const formatArea = (value) => {
@@ -361,14 +365,25 @@ export default function CountyComparisonTool({
             <SummaryCard title={selectedB} density={countyBDensity} />
           </div>
 
+          <CountyInsightBrief
+            selectedA={selectedA}
+            selectedB={selectedB}
+            countyADensity={countyADensity}
+            countyBDensity={countyBDensity}
+            countyAGap={countyAGap}
+            countyBGap={countyBGap}
+          />
+
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-5">
               <h3 className="text-lg font-bold text-slate-950">
                 Comparison Metrics
               </h3>
+
               <p className="mt-1 text-sm text-slate-600">
-                Highlighted cells show the higher value for that metric. Ownership
-                mix is shown as descriptive context and is not highlighted.
+                Highlighted cells show the higher value for that metric.
+                Ownership mix is shown as descriptive context and is not
+                highlighted.
               </p>
             </div>
 
@@ -390,8 +405,8 @@ export default function CountyComparisonTool({
 
                 <tbody>
                   {metricGroups.map((group) => (
-                    <>
-                      <tr key={`${group.title}-heading`}>
+                    <Fragment key={group.title}>
+                      <tr>
                         <td
                           colSpan="3"
                           className="bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"
@@ -427,7 +442,7 @@ export default function CountyComparisonTool({
                           </tr>
                         )
                       })}
-                    </>
+                    </Fragment>
                   ))}
                 </tbody>
               </table>
