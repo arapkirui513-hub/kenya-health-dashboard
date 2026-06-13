@@ -163,12 +163,21 @@ function Dashboard() {
             </p>
           </div>
 
+          <div className="flex flex-wrap gap-3">
           <Link
-            to="/map"
-            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
+          to="/map"
+          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
           >
-            County Map
-          </Link>
+           County Map
+           </Link>
+
+            <Link
+             to="/county-explorer"
+              className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800"
+             >
+             County Explorer
+             </Link>
+          </div>
         </div>
       </header>
 
