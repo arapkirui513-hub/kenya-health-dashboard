@@ -361,7 +361,7 @@ export default function CountyComparisonReportButton({
     <button
       type="button"
       onClick={handlePrintReport}
-      className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+     className="min-h-11 w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
     >
       Print / Save Report
     </button>

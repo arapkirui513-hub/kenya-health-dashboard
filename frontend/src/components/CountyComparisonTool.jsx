@@ -92,35 +92,85 @@ function MetricCell({ value, formatter, isHighlighted }) {
   )
 }
 
+function MobileMetricCard({ row, selectedA, selectedB }) {
+  const higherSide = getHigherSide(row.a, row.b, row.highlight)
+
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <h4 className="text-sm font-semibold text-slate-950">{row.label}</h4>
+
+      <div className="mt-3 grid gap-3">
+        <div
+          className={`rounded-xl border p-3 ${
+            higherSide === "A"
+              ? "border-teal-100 bg-teal-50"
+              : "border-slate-100 bg-slate-50"
+          }`}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {selectedA}
+          </p>
+          <p
+            className={`mt-1 text-base font-bold ${
+              higherSide === "A" ? "text-teal-900" : "text-slate-900"
+            }`}
+          >
+            {row.formatter(row.a)}
+          </p>
+        </div>
+
+        <div
+          className={`rounded-xl border p-3 ${
+            higherSide === "B"
+              ? "border-teal-100 bg-teal-50"
+              : "border-slate-100 bg-slate-50"
+          }`}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {selectedB}
+          </p>
+          <p
+            className={`mt-1 text-base font-bold ${
+              higherSide === "B" ? "text-teal-900" : "text-slate-900"
+            }`}
+          >
+            {row.formatter(row.b)}
+          </p>
+        </div>
+      </div>
+    </article>
+  )
+}
+
 function SummaryCard({ title, density }) {
   return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-lg font-bold text-slate-950">{title}</h3>
+    <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <h3 className="text-base font-bold text-slate-950 sm:text-lg">{title}</h3>
 
-      <dl className="mt-4 space-y-3">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+      <dl className="mt-4 grid grid-cols-3 gap-2 sm:block sm:space-y-3">
+        <div className="rounded-2xl bg-slate-50 p-2 sm:bg-transparent sm:p-0">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
             Population
           </dt>
-          <dd className="mt-1 text-2xl font-bold text-slate-950">
+          <dd className="mt-1 text-base font-bold text-slate-950 sm:text-2xl">
             {formatCount(density?.population_2019)}
           </dd>
         </div>
 
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl bg-slate-50 p-2 sm:bg-transparent sm:p-0">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
             Total facilities
           </dt>
-          <dd className="mt-1 text-2xl font-bold text-slate-950">
+          <dd className="mt-1 text-base font-bold text-slate-950 sm:text-2xl">
             {formatCount(density?.total_facilities)}
           </dd>
         </div>
 
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl bg-teal-50 p-2 sm:bg-transparent sm:p-0">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
             Facility density
           </dt>
-          <dd className="mt-1 text-2xl font-bold text-teal-800">
+          <dd className="mt-1 text-base font-bold text-teal-800 sm:text-2xl">
             {formatRate(density?.facilities_per_100k_population)}
           </dd>
         </div>
@@ -297,25 +347,25 @@ export default function CountyComparisonTool({
   ]
 
   return (
-    <section className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="space-y-4 sm:space-y-6">
+      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">
+            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700 sm:text-sm">
               Side-by-Side Comparison
             </p>
 
-            <h2 className="mt-2 text-2xl font-bold text-slate-950">
+            <h2 className="mt-2 text-xl font-bold text-slate-950 sm:text-2xl">
               Compare Two Counties
             </h2>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              Select two counties to compare population-adjusted healthcare
-              access, ownership mix, and service coverage indicators.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:block">
+              Select two counties to compare access, ownership, and service
+              coverage.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:max-w-xl">
             <label className="space-y-1">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 County A
@@ -323,7 +373,7 @@ export default function CountyComparisonTool({
               <select
                 value={selectedA}
                 onChange={(event) => setSelectedA(event.target.value)}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                className="min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
               >
                 {countyOptions.map((county) => (
                   <option key={county} value={county}>
@@ -340,7 +390,7 @@ export default function CountyComparisonTool({
               <select
                 value={selectedB}
                 onChange={(event) => setSelectedB(event.target.value)}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100"
+                className="min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
               >
                 {countyOptions.map((county) => (
                   <option key={county} value={county}>
@@ -350,7 +400,7 @@ export default function CountyComparisonTool({
               </select>
             </label>
 
-            <div className="flex justify-end sm:col-span-2">
+            <div className="col-span-full">
               <CountyComparisonReportButton
                 selectedA={selectedA}
                 selectedB={selectedB}
@@ -367,7 +417,7 @@ export default function CountyComparisonTool({
       </div>
 
       {sameCounty ? (
-        <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6">
+        <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 sm:p-6">
           <p className="text-sm font-medium text-amber-900">
             Select two different counties to compare.
           </p>
@@ -389,19 +439,39 @@ export default function CountyComparisonTool({
           />
 
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-200 p-5">
-              <h3 className="text-lg font-bold text-slate-950">
+            <div className="border-b border-slate-200 p-4 sm:p-5">
+              <h3 className="text-base font-bold text-slate-950 sm:text-lg">
                 Comparison Metrics
               </h3>
-
-              <p className="mt-1 text-sm text-slate-600">
-                Highlighted cells show the higher value for that metric.
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Highlighted values show the higher value for that metric.
                 Ownership mix is shown as descriptive context and is not
                 highlighted.
               </p>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="space-y-5 p-4 md:hidden">
+              {metricGroups.map((group) => (
+                <section key={group.title} className="space-y-3">
+                  <h4 className="rounded-2xl bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600">
+                    {group.title}
+                  </h4>
+
+                  <div className="grid gap-3">
+                    {group.rows.map((row) => (
+                      <MobileMetricCard
+                        key={`${group.title}-${row.label}`}
+                        row={row}
+                        selectedA={selectedA}
+                        selectedB={selectedB}
+                      />
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="min-w-full border-separate border-spacing-y-1 p-3">
                 <thead>
                   <tr className="text-left">
@@ -422,7 +492,7 @@ export default function CountyComparisonTool({
                     <Fragment key={group.title}>
                       <tr>
                         <td
-                          colSpan="3"
+                          colSpan={3}
                           className="bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"
                         >
                           {group.title}
