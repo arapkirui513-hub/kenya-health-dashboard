@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from "react"
 import CountyInsightBrief from "./CountyInsightBrief"
+import CountyComparisonReportButton from "./CountyComparisonReportButton"
 
 const normalizeCounty = (name = "") =>
   name
@@ -348,6 +349,19 @@ export default function CountyComparisonTool({
                 ))}
               </select>
             </label>
+
+            <div className="flex justify-end sm:col-span-2">
+              <CountyComparisonReportButton
+                selectedA={selectedA}
+                selectedB={selectedB}
+                countyADensity={countyADensity}
+                countyBDensity={countyBDensity}
+                countyACounties={countyACounties}
+                countyBCounties={countyBCounties}
+                countyAGap={countyAGap}
+                countyBGap={countyBGap}
+              />
+            </div>
           </div>
         </div>
       </div>
