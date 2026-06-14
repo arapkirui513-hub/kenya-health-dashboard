@@ -19,7 +19,7 @@ function AccessDensitySection({ apiBase }) {
     axios
       .get(`${apiBase}/access-density`)
       .then((response) => {
-        setAccessDensity(response.data)
+        setAccessDensity(response.data || [])
         setLoading(false)
       })
       .catch(() => {
@@ -81,7 +81,10 @@ function AccessDensitySection({ apiBase }) {
 
     return {
       totalPopulation: totals.population,
-      facilitiesPer100k: calculateRate(totals.totalFacilities, totals.population),
+      facilitiesPer100k: calculateRate(
+        totals.totalFacilities,
+        totals.population
+      ),
       publicPer100k: calculateRate(totals.publicFacilities, totals.population),
       artPer100k: calculateRate(totals.artFacilities, totals.population),
     }
@@ -136,7 +139,7 @@ function AccessDensitySection({ apiBase }) {
             Version 2 Access Intelligence
           </p>
 
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-2xl">
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
             Population-Adjusted Access
           </h2>
 
@@ -298,7 +301,8 @@ function MobileDensityBarList({ rows, metricKey, formatRate }) {
     <div className="mt-5 space-y-3 md:hidden">
       {rows.map((row) => {
         const value = Number(row[metricKey]) || 0
-        const width = value > 0 ? `${Math.max((value / maxValue) * 100, 8)}%` : "0%"
+        const width =
+          value > 0 ? `${Math.max((value / maxValue) * 100, 8)}%` : "0%"
 
         return (
           <div key={row.county} className="rounded-2xl border bg-slate-50 p-3">
@@ -313,7 +317,10 @@ function MobileDensityBarList({ rows, metricKey, formatRate }) {
             </div>
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-              <div className="h-full rounded-full bg-emerald-700" style={{ width }} />
+              <div
+                className="h-full rounded-full bg-emerald-700"
+                style={{ width }}
+              />
             </div>
           </div>
         )
