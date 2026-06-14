@@ -30,9 +30,9 @@ https://github.com/arapkirui513-hub/kenya-health-dashboard
 
 ---
 
-## Version 2.0.0 Update
+## Version 2 Update
 
-Version 2 expands the dashboard from facility distribution analytics into population-adjusted healthcare access analysis.
+Version 2 expands the dashboard from facility distribution analytics into population-adjusted healthcare access analysis, county comparison, planning interpretation, and printable reporting.
 
 Version 1 helped answer:
 
@@ -44,6 +44,8 @@ Version 2 now helps answer:
 
 ```text
 How does facility availability compare to population size?
+How do two counties compare across access, ownership, geography, and service coverage?
+How can county comparison insights be shared as a report?
 ```
 
 New V2 features:
@@ -57,6 +59,8 @@ New V2 features:
 * Ownership mix comparison
 * Service coverage comparison
 * County-level planning view
+* County Insight Briefs that translate selected county comparisons into plain-language planning notes
+* Printable county comparison reports using the browser print / save-as-PDF workflow
 
 V2 Completion Report:
 
@@ -103,6 +107,8 @@ The dashboard helps answer questions such as:
 * How does facility availability compare to population size?
 * Which counties have lower facility density after adjusting for population?
 * How do two counties compare across facility access, ownership mix, and service coverage?
+* What does a county comparison mean in plain planning language?
+* Can county comparison outputs be printed or saved as PDF reports?
 * Can facilities be searched, filtered, and exported for further analysis?
 
 The project was developed as a portfolio-ready full-stack data analytics application.
@@ -138,8 +144,13 @@ The project was developed as a portfolio-ready full-stack data analytics applica
 * Facility access comparison
 * Ownership mix comparison
 * Service coverage comparison
+* Geography and population-density context
 * Same-county comparison guard
 * Highlighting for higher numeric values where comparison is meaningful
+* County Insight Briefs for plain-language planning interpretation
+* Printable county comparison report
+* Browser-based save-as-PDF workflow
+* Report includes selected counties, summary metrics, comparison table, timestamp, and dashboard links
 
 ### Interactive Visualisations
 
@@ -220,7 +231,9 @@ kenya-health-dashboard/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── AccessDensitySection.jsx
-│   │   │   └── CountyComparisonTool.jsx
+│   │   │   ├── CountyComparisonReportButton.jsx
+│   │   │   ├── CountyComparisonTool.jsx
+│   │   │   └── CountyInsightBrief.jsx
 │   │   ├── data/
 │   │   ├── pages/
 │   │   │   ├── Dashboard.jsx
@@ -282,6 +295,30 @@ Example:
 
 ---
 
+## Printable County Reports
+
+The County Explorer includes a **Print / Save Report** button.
+
+This lets users generate a clean county comparison report in a new browser window. The report can be printed or saved as a PDF through the browser print dialog.
+
+The report includes:
+
+* Selected counties
+* Generation timestamp
+* Population
+* Total facilities
+* Facility density per 100,000 people
+* Land area
+* Population density
+* Ownership mix
+* Service coverage metrics
+* Planning note
+* Dashboard links
+
+This feature is frontend-only. It does not require a backend PDF endpoint or external PDF library.
+
+---
+
 ## Key Insights
 
 Some examples from the analysis include:
@@ -294,6 +331,8 @@ Some examples from the analysis include:
 * Facility quantity alone does not necessarily indicate broad healthcare service availability.
 * Population-adjusted facility density gives a clearer view of access than raw facility counts alone.
 * County-to-county comparison helps reveal differences in facility access, ownership mix, and service coverage.
+* County Insight Briefs help non-technical users understand what the numbers mean.
+* Printable reports make county comparisons easier to share during planning discussions.
 
 ---
 
@@ -354,7 +393,6 @@ Initial full-stack dashboard release with facility distribution, ownership analy
 
 ### v2.0.0
 
-- County Insight Briefs that translate selected county comparisons into plain-language planning notes
 Population-adjusted access analysis and County Explorer comparison tool.
 
 Completed:
@@ -367,17 +405,35 @@ Completed:
 * Side-by-side county comparison tool
 * V2 screenshots and completion report
 
-### Post-Release V2 Enhancement
+### v2.1.0
 
-After the `v2.0.0` release, the County Explorer was extended with **County Insight Briefs**.
+County Insight Briefs for the County Explorer.
 
-This feature adds short planning interpretations below the county comparison summary cards. The briefs explain facility access, geography context, and service coverage differences between the selected counties.
+Added:
+
+* Plain-language county comparison interpretation
+* Facility access insight
+* Geography context insight
+* Service coverage insight
+* Dynamic text that updates when selected counties change
+
+### v2.2.0
+
+Printable county comparison reports for the County Explorer.
+
+Added:
+
+* Print / Save Report button
+* Browser print dialog workflow
+* PDF export through Save as PDF
+* Printable summary cards
+* Printable comparison metrics table
+* Report timestamp and dashboard links
 
 ---
 
 ## Future Enhancements
 
-* Downloadable county comparison reports
 * Advanced geographic access indicators
 * Facility trend analysis
 * Enhanced filtering and comparison workflows
