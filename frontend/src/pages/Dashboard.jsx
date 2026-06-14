@@ -20,6 +20,13 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000"
 
 const COLORS = ["#047857", "#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#064e3b"]
 
+const formatNumber = (value) => Number(value || 0).toLocaleString()
+
+const getMaxValue = (items, key) => {
+  const values = items.map((item) => Number(item[key])).filter(Number.isFinite)
+  return Math.max(...values, 1)
+}
+
 function Dashboard() {
   const [summary, setSummary] = useState(null)
   const [ownership, setOwnership] = useState([])
@@ -153,106 +160,114 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl lg:text-3xl">
               Kenya Health Facilities Dashboard
             </h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Explore facility distribution, ownership, and service availability across Kenya.
+            <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg lg:text-sm lg:leading-6">
+              Explore facility distribution, ownership, and service availability
+              across Kenya.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-          <Link
-          to="/map"
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800"
-          >
-           County Map
-           </Link>
+          <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+            <Link
+              to="/map"
+              className="flex min-h-12 items-center justify-center rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 sm:w-auto"
+            >
+              County Map
+            </Link>
 
             <Link
-             to="/county-explorer"
-              className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800"
-             >
-             County Explorer
-             </Link>
+              to="/county-explorer"
+              className="flex min-h-12 items-center justify-center rounded-2xl bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-teal-800 sm:w-auto"
+            >
+              County Explorer
+            </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {loading && (
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border bg-white p-5 shadow-sm">
             <p className="text-slate-600">Loading dashboard data...</p>
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-700">
             {error}
           </div>
         )}
 
         {summary && (
           <>
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-slate-900">
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-2xl font-bold text-slate-950 sm:text-xl">
                 National Overview
               </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Key summary statistics from the cleaned Kenya health facilities dataset.
+              <p className="mt-2 text-base leading-7 text-slate-600 sm:text-sm sm:leading-6">
+                Key summary statistics from the cleaned Kenya health facilities
+                dataset.
               </p>
             </section>
 
-            <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <MetricCard
                 title="Total Facilities"
                 value={summary.total_facilities}
-                description="Cleaned facility records"
+                description="Cleaned records"
               />
 
               <MetricCard
                 title="Counties Covered"
                 value={summary.counties_covered}
-                description="Kenya counties represented"
+                description="Kenya counties"
               />
 
               <MetricCard
                 title="Provinces Covered"
                 value={summary.provinces_covered}
-                description="Historical province grouping"
+                description="Historical groups"
               />
 
               <MetricCard
                 title="Facility Categories"
                 value={summary.facility_types}
-                description="Broad facility type groups"
+                description="Type groups"
               />
             </section>
 
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
+            <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
+              <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                 About this dashboard
               </h3>
-              <p className="mt-3 text-slate-600">
-                This dashboard analyses cleaned Kenya health facilities data to help identify
-                healthcare access patterns and possible service gaps. It focuses on facility
-                distribution, ownership, facility categories, and selected service availability
-                across counties.
+              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                This dashboard analyses cleaned Kenya health facilities data to
+                identify healthcare access patterns, ownership patterns, and
+                selected service gaps across counties.
               </p>
             </section>
 
-            <section className="mt-8 grid gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
+            <section className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-2">
+              <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-6">
+                <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                   Ownership Breakdown
                 </h3>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-2 text-sm leading-6 text-slate-500">
                   Number of health facilities by ownership category.
                 </p>
 
-                <div className="mt-6 h-80">
+                <MobileBarList
+                  items={ownership}
+                  labelKey="category"
+                  valueKey="count"
+                  formatter={formatNumber}
+                />
+
+                <div className="mt-6 hidden h-80 md:block">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -265,7 +280,10 @@ function Dashboard() {
                         label
                       >
                         {ownership.map((entry, index) => (
-                          <Cell key={entry.category} fill={COLORS[index % COLORS.length]} />
+                          <Cell
+                            key={entry.category}
+                            fill={COLORS[index % COLORS.length]}
+                          />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -275,26 +293,26 @@ function Dashboard() {
                 </div>
               </div>
 
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
+              <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-6">
+                <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                   Quick Insight
                 </h3>
-                <p className="mt-4 text-slate-600">
-                  Public and private facilities make up the largest share of Kenya’s health
-                  facility network.
+                <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                  Public and private facilities make up the largest share of
+                  Kenya’s health facility network.
                 </p>
 
-                <div className="mt-6 space-y-3">
+                <div className="mt-5 space-y-3">
                   {ownership.map((item) => (
                     <div
                       key={item.category}
-                      className="flex items-center justify-between border-b pb-2 text-sm"
+                      className="flex items-center justify-between rounded-xl border bg-slate-50 px-4 py-3 text-sm"
                     >
                       <span className="font-medium text-slate-700">
                         {item.category}
                       </span>
-                      <span className="font-semibold text-health-700">
-                        {item.count.toLocaleString()}
+                      <span className="font-bold text-health-700">
+                        {formatNumber(item.count)}
                       </span>
                     </div>
                   ))}
@@ -302,15 +320,18 @@ function Dashboard() {
               </div>
             </section>
 
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
-                Facility Categories
-              </h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Distribution of health facilities by broad facility category.
-              </p>
+            <ChartSection
+              title="Facility Categories"
+              description="Distribution of health facilities by broad facility category."
+            >
+              <MobileBarList
+                items={facilityTypes}
+                labelKey="category"
+                valueKey="count"
+                formatter={formatNumber}
+              />
 
-              <div className="mt-6 h-80">
+              <div className="mt-6 hidden h-80 md:block">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={facilityTypes}
@@ -325,18 +346,21 @@ function Dashboard() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            </section>
+            </ChartSection>
 
-            <section className="mt-8 grid gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Top 10 Counties by Number of Facilities
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  Counties with the highest number of recorded health facilities.
-                </p>
+            <section className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-2">
+              <ChartCard
+                title="Top 10 Counties by Number of Facilities"
+                description="Counties with the highest number of recorded health facilities."
+              >
+                <MobileBarList
+                  items={topCounties}
+                  labelKey="county"
+                  valueKey="total"
+                  formatter={formatNumber}
+                />
 
-                <div className="mt-6 h-96">
+                <div className="mt-6 hidden h-96 md:block">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={topCounties}
@@ -351,24 +375,20 @@ function Dashboard() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </ChartCard>
 
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Counties with Fewest Facilities
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  Counties with the lowest number of recorded health facilities.
-                </p>
-
-                <div className="mt-6 space-y-3">
+              <ChartCard
+                title="Counties with Fewest Facilities"
+                description="Counties with the lowest number of recorded health facilities."
+              >
+                <div className="mt-5 space-y-3">
                   {bottomCounties.map((county) => (
                     <div
                       key={county.county}
-                      className="flex items-center justify-between rounded-lg border bg-slate-50 px-4 py-3"
+                      className="flex items-center justify-between rounded-xl border bg-slate-50 px-4 py-3"
                     >
                       <div>
-                        <p className="font-medium text-slate-800">
+                        <p className="font-semibold text-slate-800">
                           {county.county}
                         </p>
                         <p className="text-sm text-slate-500">
@@ -376,24 +396,27 @@ function Dashboard() {
                         </p>
                       </div>
                       <p className="text-xl font-bold text-health-700">
-                        {county.total.toLocaleString()}
+                        {formatNumber(county.total)}
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </ChartCard>
             </section>
 
-            <section className="mt-8 grid gap-6 lg:grid-cols-2">
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Service Availability
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  Number of facilities offering selected key health services nationally.
-                </p>
+            <section className="mt-6 grid gap-5 lg:mt-8 lg:grid-cols-2">
+              <ChartCard
+                title="Service Availability"
+                description="Number of facilities offering selected key health services nationally."
+              >
+                <MobileBarList
+                  items={serviceChartData}
+                  labelKey="service"
+                  valueKey="count"
+                  formatter={formatNumber}
+                />
 
-                <div className="mt-6 h-80">
+                <div className="mt-6 hidden h-80 md:block">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={serviceChartData}
@@ -408,49 +431,48 @@ function Dashboard() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </div>
+              </ChartCard>
 
-              <div className="rounded-xl border bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  Possible ART Service Gaps
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  Counties with the lowest ART availability as a share of facilities.
-                </p>
-
-                <div className="mt-6 space-y-3">
+              <ChartCard
+                title="Possible ART Service Gaps"
+                description="Counties with the lowest ART availability as a share of facilities."
+              >
+                <div className="mt-5 space-y-3">
                   {lowestArtCoverage.map((county) => (
                     <div
                       key={county.county}
-                      className="rounded-lg border bg-slate-50 px-4 py-3"
+                      className="rounded-xl border bg-slate-50 px-4 py-3"
                     >
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-slate-800">
+                      <div className="flex items-center justify-between gap-4">
+                        <p className="font-semibold text-slate-800">
                           {county.county}
                         </p>
                         <p className="font-bold text-health-700">
                           {county.coverage.toFixed(1)}%
                         </p>
                       </div>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {county.art} ART facilities out of {county.total} total facilities
+                      <p className="mt-1 text-sm leading-6 text-slate-500">
+                        {county.art} ART facilities out of {county.total} total
+                        facilities
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </ChartCard>
             </section>
 
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
-                Lowest Service Coverage Scores
-              </h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Average percentage of facilities offering FP, IPD, HBC, C-IMCI and ART.
-                Lower scores may indicate broader service availability gaps.
-              </p>
+            <ChartSection
+              title="Lowest Service Coverage Scores"
+              description="Average percentage of facilities offering FP, IPD, HBC, C-IMCI and ART. Lower scores may indicate broader service availability gaps."
+            >
+              <MobileBarList
+                items={lowestServiceCoverage}
+                labelKey="county"
+                valueKey="coverage_score"
+                formatter={(value) => `${Number(value || 0).toFixed(1)}%`}
+              />
 
-              <div className="mt-6 h-96">
+              <div className="mt-6 hidden h-96 md:block">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={lowestServiceCoverage}
@@ -465,14 +487,14 @@ function Dashboard() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            </section>
+            </ChartSection>
 
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
+            <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
+              <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                 Key Findings
               </h3>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
                 <FindingCard
                   title="Facility concentration"
                   text="Nairobi has the highest number of recorded health facilities, while Lamu has the fewest."
@@ -504,19 +526,19 @@ function Dashboard() {
                 />
               </div>
             </section>
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm"></section>
+
             <AccessDensitySection apiBase={API_BASE} />
 
-            <section className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900">
+            <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
+              <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                 Facility Finder
               </h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Search and filter individual health facilities by county, ownership,
-                category, and name.
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Search and filter individual health facilities by county,
+                ownership, category, and name.
               </p>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-4">
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
                 <input
                   type="text"
                   value={search}
@@ -525,7 +547,7 @@ function Dashboard() {
                     setPage(1)
                   }}
                   placeholder="Search facility name..."
-                  className="rounded-lg border px-3 py-2 text-sm"
+                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
                 />
 
                 <select
@@ -534,7 +556,7 @@ function Dashboard() {
                     setSelectedCounty(event.target.value)
                     setPage(1)
                   }}
-                  className="rounded-lg border px-3 py-2 text-sm"
+                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
                 >
                   <option value="">All counties</option>
                   {counties.map((county) => (
@@ -550,7 +572,7 @@ function Dashboard() {
                     setSelectedOwnership(event.target.value)
                     setPage(1)
                   }}
-                  className="rounded-lg border px-3 py-2 text-sm"
+                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
                 >
                   <option value="">All ownership</option>
                   {ownership.map((item) => (
@@ -566,7 +588,7 @@ function Dashboard() {
                     setSelectedFacilityType(event.target.value)
                     setPage(1)
                   }}
-                  className="rounded-lg border px-3 py-2 text-sm"
+                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
                 >
                   <option value="">All facility categories</option>
                   {facilityTypes.map((item) => (
@@ -577,16 +599,17 @@ function Dashboard() {
                 </select>
               </div>
 
-              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-slate-500">
-                  Showing {startResult.toLocaleString()}–{endResult.toLocaleString()} of{" "}
+              <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <p className="text-sm leading-6 text-slate-500">
+                  Showing {startResult.toLocaleString()}–
+                  {endResult.toLocaleString()} of{" "}
                   {facilityTotal.toLocaleString()} matching facilities.
                 </p>
 
-                <div className="flex gap-3">
+                <div className="grid grid-cols-2 gap-3 sm:flex">
                   <button
                     onClick={handleExport}
-                    className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+                    className="min-h-11 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
                   >
                     ↓ Export CSV
                   </button>
@@ -599,14 +622,33 @@ function Dashboard() {
                       setSelectedFacilityType("")
                       setPage(1)
                     }}
-                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    className="min-h-11 rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                   >
                     Clear filters
                   </button>
                 </div>
               </div>
 
-              <div className="mt-6 overflow-x-auto">
+              <div className="mt-5 space-y-3 md:hidden">
+                {facilityLoading ? (
+                  <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
+                    Loading facilities...
+                  </div>
+                ) : facilities.length > 0 ? (
+                  facilities.map((facility) => (
+                    <FacilityCard
+                      key={facility.facility_code}
+                      facility={facility}
+                    />
+                  ))
+                ) : (
+                  <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
+                    No facilities found for the selected filters.
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 hidden overflow-x-auto md:block">
                 <table className="min-w-full border-collapse text-sm">
                   <thead>
                     <tr className="border-b bg-slate-50 text-left text-slate-600">
@@ -623,7 +665,10 @@ function Dashboard() {
                   <tbody>
                     {facilityLoading ? (
                       <tr>
-                        <td colSpan="7" className="px-4 py-6 text-center text-slate-500">
+                        <td
+                          colSpan="7"
+                          className="px-4 py-6 text-center text-slate-500"
+                        >
                           Loading facilities...
                         </td>
                       </tr>
@@ -638,15 +683,24 @@ function Dashboard() {
                           </td>
                           <td className="px-4 py-3">{facility.county}</td>
                           <td className="px-4 py-3">{facility.district}</td>
-                          <td className="px-4 py-3">{facility.facility_category}</td>
-                          <td className="px-4 py-3">{facility.ownership_category}</td>
+                          <td className="px-4 py-3">
+                            {facility.facility_category}
+                          </td>
+                          <td className="px-4 py-3">
+                            {facility.ownership_category}
+                          </td>
                           <td className="px-4 py-3">{facility.beds}</td>
-                          <td className="px-4 py-3">{facility.operational_status}</td>
+                          <td className="px-4 py-3">
+                            {facility.operational_status}
+                          </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="7" className="px-4 py-6 text-center text-slate-500">
+                        <td
+                          colSpan="7"
+                          className="px-4 py-6 text-center text-slate-500"
+                        >
                           No facilities found for the selected filters.
                         </td>
                       </tr>
@@ -660,21 +714,25 @@ function Dashboard() {
                   Page {page} of {totalPages || 1}
                 </p>
 
-                <div className="flex items-center gap-3">
+                <div className="grid w-full grid-cols-2 gap-3 sm:w-auto">
                   <button
-                    onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+                    onClick={() =>
+                      setPage((currentPage) => Math.max(currentPage - 1, 1))
+                    }
                     disabled={page === 1}
-                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Previous
                   </button>
 
                   <button
                     onClick={() =>
-                      setPage((currentPage) => Math.min(currentPage + 1, totalPages || 1))
+                      setPage((currentPage) =>
+                        Math.min(currentPage + 1, totalPages || 1)
+                      )
                     }
                     disabled={page >= totalPages}
-                    className="rounded-lg border px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next
                   </button>
@@ -690,20 +748,134 @@ function Dashboard() {
 
 function MetricCard({ title, value, description }) {
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm">
-      <p className="text-sm font-medium text-slate-500">{title}</p>
-      <p className="mt-3 text-3xl font-bold text-health-700">
+    <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-6">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:text-sm sm:normal-case">
+        {title}
+      </p>
+      <p className="mt-2 text-2xl font-black text-health-700 sm:mt-3 sm:text-3xl">
         {Number(value).toLocaleString()}
       </p>
-      <p className="mt-2 text-sm text-slate-500">{description}</p>
+      <p className="mt-1 text-xs leading-5 text-slate-500 sm:mt-2 sm:text-sm">
+        {description}
+      </p>
     </div>
+  )
+}
+
+function ChartSection({ title, description, children }) {
+  return (
+    <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
+      <h3 className="text-xl font-bold text-slate-950 sm:text-lg">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-500">{description}</p>
+      {children}
+    </section>
+  )
+}
+
+function ChartCard({ title, description, children }) {
+  return (
+    <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-6">
+      <h3 className="text-xl font-bold text-slate-950 sm:text-lg">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-500">{description}</p>
+      {children}
+    </div>
+  )
+}
+
+function MobileBarList({ items, labelKey, valueKey, formatter }) {
+  const max = getMaxValue(items, valueKey)
+
+  return (
+    <div className="mt-5 space-y-3 md:hidden">
+      {items.map((item) => {
+        const value = Number(item[valueKey]) || 0
+        const width = value > 0 ? `${Math.max((value / max) * 100, 8)}%` : "0%"
+
+        return (
+          <div key={item[labelKey]} className="rounded-2xl border bg-slate-50 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="min-w-0 truncate text-sm font-semibold text-slate-800">
+                {item[labelKey]}
+              </p>
+              <p className="shrink-0 text-sm font-bold text-health-700">
+                {formatter(value)}
+              </p>
+            </div>
+
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+              <div className="h-full rounded-full bg-emerald-700" style={{ width }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function FacilityCard({ facility }) {
+  return (
+    <article className="rounded-2xl border bg-slate-50 p-4">
+      <h4 className="font-bold leading-6 text-slate-900">
+        {facility.facility_name}
+      </h4>
+
+      <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            County
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">{facility.county}</dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            District
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">{facility.district}</dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Category
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">
+            {facility.facility_category}
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Ownership
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">
+            {facility.ownership_category}
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Beds
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">{facility.beds}</dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Status
+          </dt>
+          <dd className="mt-1 font-medium text-slate-800">
+            {facility.operational_status}
+          </dd>
+        </div>
+      </dl>
+    </article>
   )
 }
 
 function FindingCard({ title, text }) {
   return (
-    <div className="rounded-lg border bg-slate-50 p-4">
-      <h4 className="font-semibold text-slate-900">{title}</h4>
+    <div className="rounded-2xl border bg-slate-50 p-4">
+      <h4 className="font-bold text-slate-900">{title}</h4>
       <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
     </div>
   )
