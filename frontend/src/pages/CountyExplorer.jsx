@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import axios from "axios"
 import CountyComparisonTool from "../components/CountyComparisonTool"
 
@@ -44,18 +45,29 @@ export default function CountyExplorer() {
     <main className="min-h-screen bg-slate-50 px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
       <div className="mx-auto max-w-6xl space-y-4 sm:space-y-6">
         <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
-            County-Level Planning
-          </p>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+                County-Level Planning
+              </p>
 
-          <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-4xl">
-            County Explorer
-          </h1>
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                County Explorer
+              </h1>
 
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
-            Compare counties using access, ownership, geography, and service
-            coverage.
-          </p>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
+                Compare counties using access, ownership, geography, and service
+                coverage.
+              </p>
+            </div>
+
+            <Link
+              to="/"
+              className="flex min-h-11 w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 sm:w-auto"
+            >
+              ← Back to Dashboard
+            </Link>
+          </div>
         </section>
 
         {loading ? (
