@@ -2,10 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import CountyComparisonTool from "../components/CountyComparisonTool"
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://kenya-health-dashboard-api.onrender.com"
+import { API_BASE } from "../config/api"
 
 export default function CountyExplorer() {
   const [accessDensity, setAccessDensity] = useState([])
@@ -22,9 +19,9 @@ export default function CountyExplorer() {
 
         const [accessResponse, countiesResponse, serviceGapResponse] =
           await Promise.all([
-            axios.get(`${API_BASE_URL}/access-density`),
-            axios.get(`${API_BASE_URL}/counties`),
-            axios.get(`${API_BASE_URL}/service-gap-score`),
+            axios.get(`${API_BASE}/access-density`),
+            axios.get(`${API_BASE}/counties`),
+            axios.get(`${API_BASE}/service-gap-score`),
           ])
 
         setAccessDensity(accessResponse.data || [])

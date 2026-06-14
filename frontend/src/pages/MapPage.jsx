@@ -4,8 +4,7 @@ import axios from "axios"
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import kenyaCounties from "../data/ken_admin1.json"
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000"
+import { API_BASE } from "../config/api"
 
 const BUCKETS = [0, 100, 200, 300, 500]
 const COLORS = ["#d1fae5", "#6ee7b7", "#34d399", "#059669", "#065f46"]
@@ -228,9 +227,18 @@ function MapPage() {
       `
         <strong>${countyData.county}</strong><br/>
         Total facilities: ${countyData.total}<br/>
-        Public: ${countyData.public} (${percentage(countyData.public, countyData.total)})<br/>
-        Private: ${countyData.private} (${percentage(countyData.private, countyData.total)})<br/>
-        Faith-Based: ${countyData.faith_based} (${percentage(countyData.faith_based, countyData.total)})<br/>
+        Public: ${countyData.public} (${percentage(
+        countyData.public,
+        countyData.total
+      )})<br/>
+        Private: ${countyData.private} (${percentage(
+        countyData.private,
+        countyData.total
+      )})<br/>
+        Faith-Based: ${countyData.faith_based} (${percentage(
+        countyData.faith_based,
+        countyData.total
+      )})<br/>
         NGO: ${countyData.ngo} (${percentage(countyData.ngo, countyData.total)})
       `,
       { sticky: true }

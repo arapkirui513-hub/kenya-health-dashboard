@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import AccessDensitySection from "../components/AccessDensitySection"
+import { API_BASE } from "../config/api"
 import {
   PieChart,
   Pie,
@@ -16,7 +17,6 @@ import {
   CartesianGrid,
 } from "recharts"
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000"
 
 const COLORS = ["#047857", "#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#064e3b"]
 
