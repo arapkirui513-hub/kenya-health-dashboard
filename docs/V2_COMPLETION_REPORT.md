@@ -32,7 +32,7 @@ https://github.com/arapkirui513-hub/kenya-health-dashboard
 
 ## Version 2 Summary
 
-Version 2 expands the Kenya Health Facilities Dashboard from descriptive facility analytics into population-adjusted healthcare access analysis and county-level comparison.
+Version 2 expands the Kenya Health Facilities Dashboard from descriptive facility analytics into population-adjusted healthcare access analysis, county-level comparison, planning interpretation, and printable reporting.
 
 Version 1 answered:
 
@@ -46,7 +46,13 @@ Version 2 now helps answer:
 How does facility availability compare to population size?
 ```
 
-Version 2 also adds county-level planning interpretation through the County Explorer and County Insight Briefs.
+Version 2 also helps answer:
+
+```text
+How do two counties compare across access, ownership, geography, and service coverage?
+What does a county comparison mean in plain planning language?
+How can county comparison outputs be shared as a report?
+```
 
 This makes the dashboard more useful for:
 
@@ -56,6 +62,8 @@ healthcare planning
 public health analysis
 portfolio review
 non-technical planning discussions
+stakeholder communication
+offline reporting
 ```
 
 ---
@@ -68,6 +76,7 @@ Completed Version 2 tasks:
 V2 Task 1: Population-Adjusted Access
 V2 Task 2: County Explorer Comparison Tool
 V2 Task 3: County Insight Briefs
+V2 Task 4: Downloadable County Comparison Reports
 ```
 
 ---
@@ -344,6 +353,104 @@ Production build passes
 
 ---
 
+## Task 4: Downloadable County Comparison Reports
+
+### Objective
+
+Add a report export workflow to the County Explorer so users can save selected county comparisons for planning discussions, team review, offline use, and portfolio demonstration.
+
+### Frontend Component Added
+
+Created:
+
+```text
+frontend/src/components/CountyComparisonReportButton.jsx
+```
+
+This component adds a:
+
+```text
+Print / Save Report
+```
+
+button to the County Explorer comparison panel.
+
+### Placement
+
+The report button appears near the county selectors inside the County Explorer comparison card.
+
+It uses the currently selected counties and generates a clean printable report in a new browser window.
+
+### Report Includes
+
+The generated report includes:
+
+```text
+selected county names
+generation timestamp
+population
+total facilities
+facility density per 100,000 people
+land area
+population density
+ownership mix
+service coverage metrics
+planning note
+dashboard links
+```
+
+### Technical Approach
+
+The feature is frontend-only.
+
+It does not add:
+
+```text
+new backend endpoints
+new PDF libraries
+new server-side report generation
+```
+
+Instead, it uses the browser print workflow.
+
+Users can choose:
+
+```text
+Print
+Save as PDF
+```
+
+from the browser print dialog.
+
+### Value Added
+
+This feature makes the County Explorer more useful for:
+
+```text
+planning discussions
+stakeholder review
+team presentations
+offline analysis
+portfolio demonstration
+public health reporting
+```
+
+### Testing
+
+Confirmed:
+
+```text
+Print / Save Report button appears on the County Explorer page
+Report opens in a new browser window
+Report includes selected county summary metrics
+Report includes comparison metrics table
+Browser print dialog opens
+Report can be saved as PDF
+Production build passes
+```
+
+---
+
 ## County Explorer Metrics
 
 The County Explorer compares counties using the following groups.
@@ -444,6 +551,16 @@ overall service coverage score
 
 This keeps the feature simple, fast, and frontend-only.
 
+### Browser-Based Report Export
+
+Downloadable County Comparison Reports use the browser print workflow.
+
+The report is generated client-side from the same selected county data already loaded in the County Explorer.
+
+No new backend endpoint or PDF library was added.
+
+This keeps the feature lightweight and easy to maintain.
+
 ---
 
 ## Testing Completed
@@ -460,6 +577,10 @@ County Insight Brief updates when selected counties change
 Metrics table renders correctly
 Same-county guard works
 Higher-value highlighting works
+Print / Save Report button appears
+Printable report opens in a new browser window
+Browser print dialog opens
+Report can be saved as PDF
 County Explorer button appears on the homepage
 Production build passes
 ```
@@ -492,6 +613,7 @@ Completed:
 V2 Task 1: Population-Adjusted Access
 V2 Task 2: County Explorer Comparison Tool
 V2 Task 3: County Insight Briefs
+V2 Task 4: Downloadable County Comparison Reports
 ```
 
 The dashboard now supports:
@@ -504,13 +626,15 @@ County-to-county comparison
 Ownership mix analysis
 Service coverage comparison
 Plain-language county insight briefs
+Printable county comparison reports
+Save-as-PDF report workflow
 ```
 
 ---
 
 ## Impact
 
-Version 2 makes the project stronger because it moves from simple counting to access analysis and planning interpretation.
+Version 2 makes the project stronger because it moves from simple counting to access analysis, planning interpretation, and report sharing.
 
 The dashboard can now support questions such as:
 
@@ -520,6 +644,7 @@ Which counties have stronger public facility availability?
 How do two counties compare across facility access and service coverage?
 Where might population size and geographic spread affect healthcare access?
 What does a county comparison mean in simple planning language?
+How can county comparison outputs be shared with a team or reviewer?
 ```
 
 This improves the project for:
@@ -531,6 +656,7 @@ public health storytelling
 portfolio demonstration
 data analytics review
 non-technical stakeholder communication
+offline reporting
 ```
 
 ---
@@ -540,31 +666,25 @@ non-technical stakeholder communication
 Recommended next task:
 
 ```text
-V2 Task 4: Downloadable County Comparison Reports
+V2 Task 5: County Planning Priority Index
 ```
 
-This would allow users to export a selected county comparison as a PDF or printable report.
+This would combine facility access, population density, public facility availability, ART access, and service coverage into a planning-priority score.
 
-The report could include:
+The goal would be to help users identify counties that may need closer review based on multiple indicators, not just one metric.
+
+Possible inputs:
 
 ```text
-selected counties
-summary cards
-County Insight Brief
-comparison metrics table
-timestamp
-dashboard links
+facilities per 100,000 people
+public facilities per 100,000 people
+ART facilities per 100,000 people
+overall service coverage score
+population density
+land area
 ```
 
-This would make the County Explorer more useful for:
-
-```text
-team presentations
-planning discussions
-portfolio demonstration
-offline review
-public health reporting
-```
+This would move the dashboard from comparison into prioritization.
 
 ---
 
@@ -579,12 +699,22 @@ Population-Adjusted Access
 County Explorer Comparison Tool
 ```
 
-### Post-Release V2 Enhancement
+### v2.1.0
 
-Added after the `v2.0.0` release:
+Added:
 
 ```text
 County Insight Briefs
 ```
 
 This enhancement extends the County Explorer with plain-language planning interpretations for selected county comparisons.
+
+### v2.2.0
+
+Added:
+
+```text
+Printable County Comparison Reports
+```
+
+This enhancement allows users to print or save selected county comparisons as PDF reports using the browser print workflow.
