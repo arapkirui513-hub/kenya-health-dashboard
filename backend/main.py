@@ -1,8 +1,12 @@
 import io
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from data_loader import (
     get_summary,
@@ -17,83 +21,131 @@ from data_loader import (
     get_access_density,
 )
 
+
+API_VERSION = "v2.3.0"
+
+ALLOWED_ORIGINS = [
+    "https://kenya-health-dashboard.vercel.app",
+    "http://localhost:5173",
+]
+
+
+limiter = Limiter(key_func=get_remote_address)
+
+
 app = FastAPI(
     title="Kenya Health Facilities API",
     description="API for analysing Kenya health facilities data",
-    version="1.0.0",
+    version=API_VERSION,
 )
+
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://kenya-health-dashboard.vercel.app",
-        "http://localhost:5173",
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=[
+        "Accept",
+        "Content-Type",
     ],
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=()"
+    )
+
+    return response
+
+
 @app.get("/")
-def home():
-    return {"message": "Kenya Health Facilities API is running"}
+@limiter.limit("120/minute")
+def home(request: Request):
+    return {
+        "message": "Kenya Health Facilities API is running",
+        "version": API_VERSION,
+    }
 
 
 @app.get("/health")
-def health():
+@limiter.limit("120/minute")
+def health(request: Request):
     return {
         "status": "ok",
         "service": "Kenya Health Facilities Dashboard API",
-        "version": "v1.0.0",
+        "version": API_VERSION,
     }
 
 
 @app.get("/summary")
-def summary():
+@limiter.limit("60/minute")
+def summary(request: Request):
     return get_summary()
 
 
 @app.get("/ownership")
-def ownership():
+@limiter.limit("60/minute")
+def ownership(request: Request):
     return get_ownership_breakdown()
 
 
 @app.get("/facility-types")
-def facility_types():
+@limiter.limit("60/minute")
+def facility_types(request: Request):
     return get_facility_type_breakdown()
 
 
 @app.get("/counties")
-def counties():
+@limiter.limit("60/minute")
+def counties(request: Request):
     return get_county_breakdown()
 
 
 @app.get("/services")
-def services():
+@limiter.limit("60/minute")
+def services(request: Request):
     return get_service_breakdown()
 
+
 @app.get("/service-gap-score")
-def service_gap_score():
+@limiter.limit("60/minute")
+def service_gap_score(request: Request):
     return get_service_gap_score()
 
 
 @app.get("/population")
-def population():
+@limiter.limit("60/minute")
+def population(request: Request):
     return get_population_data()
 
 
 @app.get("/access-density")
-def access_density():
+@limiter.limit("60/minute")
+def access_density(request: Request):
     return get_access_density()
 
 
 @app.get("/facilities/export")
+@limiter.limit("10/minute")
 def export_facilities(
-    county: str | None = Query(default=None),
-    ownership: str | None = Query(default=None),
-    facility_type: str | None = Query(default=None),
-    status: str | None = Query(default=None),
-    search: str | None = Query(default=None),
+    request: Request,
+    county: str | None = Query(default=None, max_length=100),
+    ownership: str | None = Query(default=None, max_length=100),
+    facility_type: str | None = Query(default=None, max_length=100),
+    status: str | None = Query(default=None, max_length=100),
+    search: str | None = Query(default=None, max_length=100),
 ):
     export_df = get_facilities_export(
         county=county,
@@ -107,22 +159,30 @@ def export_facilities(
     export_df.to_csv(buffer, index=False)
     buffer.seek(0)
 
+    headers = {
+        "Content-Disposition": (
+            'attachment; filename="kenya_health_facilities.csv"'
+        ),
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-store",
+    }
+
     return StreamingResponse(
         iter([buffer.getvalue()]),
-        media_type="text/csv",
-        headers={
-            "Content-Disposition": "attachment; filename=kenya_health_facilities.csv"
-        },
+        media_type="text/csv; charset=utf-8",
+        headers=headers,
     )
 
 
 @app.get("/facilities")
+@limiter.limit("60/minute")
 def facilities(
-    county: str | None = Query(default=None),
-    ownership: str | None = Query(default=None),
-    facility_type: str | None = Query(default=None),
-    status: str | None = Query(default=None),
-    search: str | None = Query(default=None),
+    request: Request,
+    county: str | None = Query(default=None, max_length=100),
+    ownership: str | None = Query(default=None, max_length=100),
+    facility_type: str | None = Query(default=None, max_length=100),
+    status: str | None = Query(default=None, max_length=100),
+    search: str | None = Query(default=None, max_length=100),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ):
