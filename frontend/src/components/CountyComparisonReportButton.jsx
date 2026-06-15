@@ -42,6 +42,14 @@ const ownershipPercent = (part, total) => {
   return (partValue / totalValue) * 100
 }
 
+const escapeHtml = (value) =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+
 const buildRows = ({
   countyADensity,
   countyBDensity,
@@ -152,6 +160,9 @@ export default function CountyComparisonReportButton({
 }) {
   const handlePrintReport = () => {
     const generatedAt = new Date().toLocaleString()
+    const safeSelectedA = escapeHtml(selectedA)
+    const safeSelectedB = escapeHtml(selectedB)
+    const safeGeneratedAt = escapeHtml(generatedAt)
 
     const rows = buildRows({
       countyADensity,
@@ -166,9 +177,9 @@ export default function CountyComparisonReportButton({
       .map(
         ([label, valueA, valueB]) => `
           <tr>
-            <td>${label}</td>
-            <td>${valueA}</td>
-            <td>${valueB}</td>
+            <td>${escapeHtml(label)}</td>
+            <td>${escapeHtml(valueA)}</td>
+            <td>${escapeHtml(valueB)}</td>
           </tr>
         `
       )
@@ -178,7 +189,7 @@ export default function CountyComparisonReportButton({
       <!doctype html>
       <html>
         <head>
-          <title>${selectedA} vs ${selectedB} County Comparison Report</title>
+          <title>${safeSelectedA} vs ${safeSelectedB} County Comparison Report</title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -278,12 +289,12 @@ export default function CountyComparisonReportButton({
 
           <p class="meta">
             Kenya Health Facilities Dashboard<br />
-            Generated: ${generatedAt}
+            Generated: ${safeGeneratedAt}
           </p>
 
           <div class="summary">
             <div class="card">
-              <h3>${selectedA}</h3>
+              <h3>${safeSelectedA}</h3>
               <p class="metric"><strong>Population:</strong> ${formatCount(
                 countyADensity?.population_2019
               )}</p>
@@ -296,7 +307,7 @@ export default function CountyComparisonReportButton({
             </div>
 
             <div class="card">
-              <h3>${selectedB}</h3>
+              <h3>${safeSelectedB}</h3>
               <p class="metric"><strong>Population:</strong> ${formatCount(
                 countyBDensity?.population_2019
               )}</p>
@@ -321,8 +332,8 @@ export default function CountyComparisonReportButton({
             <thead>
               <tr>
                 <th>Metric</th>
-                <th>${selectedA}</th>
-                <th>${selectedB}</th>
+                <th>${safeSelectedA}</th>
+                <th>${safeSelectedB}</th>
               </tr>
             </thead>
             <tbody>
@@ -345,13 +356,18 @@ export default function CountyComparisonReportButton({
       </html>
     `
 
-    const reportWindow = window.open("", "_blank", "width=900,height=1100")
+    const reportWindow = window.open(
+      "",
+      "_blank",
+      "width=900,height=1100,noopener,noreferrer"
+    )
 
     if (!reportWindow) {
       alert("Please allow pop-ups to generate the report.")
       return
     }
 
+    reportWindow.opener = null
     reportWindow.document.open()
     reportWindow.document.write(reportHtml)
     reportWindow.document.close()
