@@ -155,7 +155,7 @@ function Dashboard() {
     if (selectedFacilityType) params.append("facility_type", selectedFacilityType)
 
     const url = `${API_BASE}/facilities/export?${params.toString()}`
-    window.open(url, "_blank")
+    window.open(url, "_blank", "noopener,noreferrer")
   }
 
   return (

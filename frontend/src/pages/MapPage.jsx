@@ -18,6 +18,15 @@ function normalizeCountyName(name) {
     .trim()
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+}
+
 function getColor(total) {
   if (total == null) return "#e5e7eb"
 
@@ -217,29 +226,32 @@ function MapPage() {
     })
 
     if (!countyData) {
-      layer.bindTooltip(`<strong>${geoName}</strong><br/>No matching data`, {
-        sticky: true,
-      })
+      layer.bindTooltip(
+       `<strong>${escapeHtml(geoName)}</strong><br/>No matching data`,
+       {
+         sticky: true,
+       }
+      )
       return
     }
 
     layer.bindTooltip(
       `
-        <strong>${countyData.county}</strong><br/>
-        Total facilities: ${countyData.total}<br/>
-        Public: ${countyData.public} (${percentage(
+       <strong>${escapeHtml(countyData.county)}</strong><br/>
+       Total facilities: ${escapeHtml(countyData.total)}<br/>
+       Public: ${escapeHtml(countyData.public)} (${escapeHtml(percentage(
         countyData.public,
         countyData.total
-      )})<br/>
-        Private: ${countyData.private} (${percentage(
+      ))})<br/>
+       Private: ${escapeHtml(countyData.private)} (${escapeHtml(percentage(
         countyData.private,
         countyData.total
-      )})<br/>
-        Faith-Based: ${countyData.faith_based} (${percentage(
+      ))})<br/>
+       Faith-Based: ${escapeHtml(countyData.faith_based)} (${escapeHtml(percentage(
         countyData.faith_based,
         countyData.total
-      )})<br/>
-        NGO: ${countyData.ngo} (${percentage(countyData.ngo, countyData.total)})
+      ))})<br/>
+       NGO: ${escapeHtml(countyData.ngo)} (${escapeHtml(percentage(countyData.ngo, countyData.total))})
       `,
       { sticky: true }
     )

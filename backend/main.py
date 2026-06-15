@@ -59,13 +59,19 @@ app.add_middleware(
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
     response = await call_next(request)
+    is_https = request.url.scheme == "https"
 
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
+    if is_https:
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
     response.headers["Permissions-Policy"] = (
         "camera=(), microphone=(), geolocation=()"
     )
+    response.headers["Cross-Origin-Resource-Policy"] = "same-site"
 
     return response
 
