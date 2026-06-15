@@ -36,6 +36,14 @@ const formatDecimal = (value) => {
       })
 }
 
+
+const formatPriorityScore = (value) => {
+  const number = toNumber(value)
+  return number === null ? "N/A" : number.toFixed(1)
+}
+
+const formatPriorityLevel = (value) => value || "N/A"
+
 const formatArea = (value) => {
   const number = toNumber(value)
   return number === null ? "—" : `${number.toLocaleString()} km²`
@@ -76,6 +84,19 @@ const getHigherSide = (a, b, shouldHighlight) => {
   }
 
   return aValue > bValue ? "A" : "B"
+}
+
+
+const getPriorityBadgeClass = (level) => {
+  if (level === "High") {
+    return "border-red-200 bg-red-50 text-red-700"
+  }
+
+  if (level === "Medium") {
+    return "border-amber-200 bg-amber-50 text-amber-700"
+  }
+
+  return "border-emerald-200 bg-emerald-50 text-emerald-700"
 }
 
 function MetricCell({ value, formatter, isHighlighted }) {
@@ -142,6 +163,57 @@ function MobileMetricCard({ row, selectedA, selectedB }) {
   )
 }
 
+
+function PriorityReasonCard({ title, priority }) {
+  const flags = Array.isArray(priority?.reason_flags)
+    ? priority.reason_flags.slice(0, 5)
+    : []
+
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-bold text-slate-950 sm:text-lg">
+            {title}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">Planning priority</p>
+        </div>
+
+        <span
+          className={`rounded-full border px-3 py-1 text-xs font-semibold ${getPriorityBadgeClass(
+            priority?.priority_level
+          )}`}
+        >
+          {priority?.priority_level || "N/A"}
+        </span>
+      </div>
+
+      <p className="mt-4 text-3xl font-black text-slate-950">
+        {formatPriorityScore(priority?.priority_score)}
+      </p>
+
+      <p className="mt-1 text-sm text-slate-500">
+        Higher scores signal stronger planning attention.
+      </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {flags.length > 0 ? (
+          flags.map((flag) => (
+            <span
+              key={flag}
+              className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600"
+            >
+              {flag}
+            </span>
+          ))
+        ) : (
+          <span className="text-sm text-slate-400">No major flags</span>
+        )}
+      </div>
+    </article>
+  )
+}
+
 function SummaryCard({ title, density }) {
   return (
     <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -183,6 +255,7 @@ export default function CountyComparisonTool({
   accessDensity,
   counties,
   serviceGap,
+  priorityIndex,
 }) {
   const [selectedA, setSelectedA] = useState("Nairobi")
   const [selectedB, setSelectedB] = useState("Turkana")
@@ -203,9 +276,59 @@ export default function CountyComparisonTool({
   const countyAGap = findCounty(serviceGap, selectedA)
   const countyBGap = findCounty(serviceGap, selectedB)
 
+  const countyAPriority = findCounty(priorityIndex, selectedA)
+  const countyBPriority = findCounty(priorityIndex, selectedB)
+
   const sameCounty = normalizeCounty(selectedA) === normalizeCounty(selectedB)
 
   const metricGroups = [
+    {
+      title: "Planning Priority",
+      rows: [
+        {
+          label: "Priority score",
+          a: countyAPriority?.priority_score,
+          b: countyBPriority?.priority_score,
+          formatter: formatPriorityScore,
+          highlight: true,
+        },
+        {
+          label: "Priority level",
+          a: countyAPriority?.priority_level,
+          b: countyBPriority?.priority_level,
+          formatter: formatPriorityLevel,
+          highlight: false,
+        },
+        {
+          label: "Access risk",
+          a: countyAPriority?.component_scores?.access_risk,
+          b: countyBPriority?.component_scores?.access_risk,
+          formatter: formatPriorityScore,
+          highlight: true,
+        },
+        {
+          label: "Service risk",
+          a: countyAPriority?.component_scores?.service_risk,
+          b: countyBPriority?.component_scores?.service_risk,
+          formatter: formatPriorityScore,
+          highlight: true,
+        },
+        {
+          label: "Ownership risk",
+          a: countyAPriority?.component_scores?.ownership_risk,
+          b: countyBPriority?.component_scores?.ownership_risk,
+          formatter: formatPriorityScore,
+          highlight: true,
+        },
+        {
+          label: "Population pressure",
+          a: countyAPriority?.component_scores?.population_pressure,
+          b: countyBPriority?.component_scores?.population_pressure,
+          formatter: formatPriorityScore,
+          highlight: true,
+        },
+      ],
+    },
     {
       title: "Population & Geography",
       rows: [
@@ -428,6 +551,11 @@ export default function CountyComparisonTool({
             <SummaryCard title={selectedA} density={countyADensity} />
             <SummaryCard title={selectedB} density={countyBDensity} />
           </div>
+
+          <section className="grid gap-4 sm:grid-cols-2">
+            <PriorityReasonCard title={selectedA} priority={countyAPriority} />
+            <PriorityReasonCard title={selectedB} priority={countyBPriority} />
+          </section>
 
           <CountyInsightBrief
             selectedA={selectedA}
