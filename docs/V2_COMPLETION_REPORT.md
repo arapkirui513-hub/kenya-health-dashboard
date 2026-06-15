@@ -1,69 +1,116 @@
-# Kenya Health Facilities Dashboard – Version 2 Completion Report
+# Version 2 Completion Report
 
-## Project
+# Kenya Health Facilities Dashboard
 
-**Kenya Health Facilities Dashboard**
+## Report Summary
 
-Live dashboard:
+Version 2 expands the Kenya Health Facilities Dashboard from a facility distribution project into a stronger healthcare planning and interpretation tool.
+
+Version 1 focused on:
+
+```text
+facility distribution
+ownership distribution
+service availability
+facility search
+county map
+CSV export
+```
+
+Version 2 adds:
+
+```text
+population-adjusted access
+county comparison
+county insight briefs
+printable reports
+backend hardening
+mobile polish
+ownership-based market dynamics
+```
+
+The dashboard now supports a stronger answer to the original project question:
+
+> To what extent does the county-level distribution of healthcare facilities in Kenya reflect both public health need and healthcare market dynamics?
+
+Version 2 addresses both sides of the question.
+
+Public health need side:
+
+```text
+population-adjusted facility access
+public facility access
+ART facility access
+service gap scoring
+county comparison
+```
+
+Market dynamics side:
+
+```text
+ownership mix
+private share
+public share
+faith-based/NGO share
+ownership imbalance
+market interpretation labels
+```
+
+---
+
+## Current Version
+
+Current release:
+
+```text
+v2.4.0
+```
+
+Current status:
+
+```text
+Version 2 complete
+```
+
+Production frontend:
 
 ```text
 https://kenya-health-dashboard.vercel.app/
 ```
 
-County Explorer:
+Production backend:
 
 ```text
-https://kenya-health-dashboard.vercel.app/county-explorer
+https://kenya-health-dashboard-api.onrender.com/
 ```
 
-Backend API:
+API documentation:
 
 ```text
-https://kenya-health-dashboard-api.onrender.com
-```
-
-Repository:
-
-```text
-https://github.com/arapkirui513-hub/kenya-health-dashboard
+https://kenya-health-dashboard-api.onrender.com/docs
 ```
 
 ---
 
-## Version 2 Summary
+## Core Project Question
 
-Version 2 expands the Kenya Health Facilities Dashboard from descriptive facility analytics into population-adjusted healthcare access analysis, county-level comparison, planning interpretation, and printable reporting.
-
-Version 1 answered:
+The project is guided by this question:
 
 ```text
-Where are health facilities located?
+To what extent does the county-level distribution of healthcare facilities in Kenya reflect both public health need and healthcare market dynamics?
 ```
 
-Version 2 now helps answer:
+Version 2 improves the dashboard by making this question measurable through structured indicators.
+
+The dashboard now helps users ask:
 
 ```text
-How does facility availability compare to population size?
-```
-
-Version 2 also helps answer:
-
-```text
+Are facilities distributed according to population size?
+Which counties have lower facility access per 100,000 people?
+Which counties rely more on public facilities?
+Which counties have stronger private facility presence?
+Which counties have stronger faith-based or NGO-supported delivery?
 How do two counties compare across access, ownership, geography, and service coverage?
-What does a county comparison mean in plain planning language?
-How can county comparison outputs be shared as a report?
-```
-
-This makes the dashboard more useful for:
-
-```text
-county comparison
-healthcare planning
-public health analysis
-portfolio review
-non-technical planning discussions
-stakeholder communication
-offline reporting
 ```
 
 ---
@@ -77,429 +124,209 @@ V2 Task 1: Population-Adjusted Access
 V2 Task 2: County Explorer Comparison Tool
 V2 Task 3: County Insight Briefs
 V2 Task 4: Downloadable County Comparison Reports
+V2 Task 5: Ownership & Market Dynamics Analysis
+```
+
+Supporting releases:
+
+```text
+v2.3.0: Backend hardening, mobile polish, and API standardization
+v2.4.0: Ownership & Market Dynamics Analysis
 ```
 
 ---
 
-## Task 1: Population-Adjusted Access
+## Release Timeline
 
-### Objective
+| Release | Focus                                | Status   |
+| ------- | ------------------------------------ | -------- |
+| v1.0.0  | Initial full-stack dashboard release | Complete |
+| v2.0.0  | Population-adjusted access           | Complete |
+| v2.1.0  | County Explorer comparison           | Complete |
+| v2.2.0  | Insight briefs and printable reports | Complete |
+| v2.2.1  | Documentation and release polish     | Complete |
+| v2.3.0  | Backend hardening and mobile polish  | Complete |
+| v2.4.0  | Ownership and market dynamics        | Complete |
 
-Add population-adjusted access metrics so users can compare counties fairly based on population size, not only raw facility counts.
+---
 
-### Backend Additions
+# Task 1: Population-Adjusted Access
 
-A new county population dataset was added:
+## Goal
+
+Task 1 addressed a key limitation in Version 1.
+
+Version 1 showed raw facility counts by county.
+
+Raw counts alone can mislead users because a county with many people may need more facilities than a county with a smaller population.
+
+Task 1 added population-adjusted access metrics so users can compare counties more fairly.
+
+---
+
+## Data Added
+
+New dataset:
 
 ```text
 backend/data/county_population.csv
 ```
 
-The dataset includes:
+Dataset includes:
 
 ```text
-47 counties
-2019 population
-2019 households
-county land area
-population density
+county
+population_2019
+households_2019
+land_area_sq_km
+population_density
 ```
 
-The population total was validated against the KNBS 2019 census total:
+The population dataset covers all 47 counties.
+
+National population total used:
 
 ```text
-47,564,296 people
+47,564,296
 ```
 
-### County Name Normalization
+---
 
-A county normalization utility was added:
+## Backend Support
 
-```text
-backend/utils.py
-```
-
-This handles county-name differences across datasets.
-
-Examples handled:
-
-```text
-TAITA/TAVETA       -> Taita Taveta
-ELGEYO/MARAKWET    -> Elgeyo Marakwet
-THARAKA-NITHI      -> Tharaka Nithi
-NAIROBI CITY       -> Nairobi
-MURANG'A           -> Murang'a
-```
-
-This prevents silent join errors when combining population and facility datasets.
-
-### New Backend Endpoints
-
-Two new backend endpoints were added:
+Task 1 added or supported these endpoints:
 
 ```text
 /population
 /access-density
 ```
 
-The `/population` endpoint returns county-level population data.
+### `/population`
 
-The `/access-density` endpoint joins health facility totals with population data and returns access-density metrics.
+Returns county population records.
 
-New metrics include:
+Expected count:
 
 ```text
-facilities_per_100k_population
-public_facilities_per_100k_population
-art_facilities_per_100k_population
+47 counties
 ```
 
-### Frontend Additions
+### `/access-density`
 
-A new frontend section was added:
+Returns population-adjusted access metrics.
 
-```text
-frontend/src/components/AccessDensitySection.jsx
-```
-
-The section appears on the main dashboard as:
+Expected count:
 
 ```text
-Population-Adjusted Access
-```
-
-It includes:
-
-```text
-National facility density
-Public facility density
-ART facility density
-Population covered
-Lowest facility density counties chart
-Lowest public facility density watchlist
-Lowest ART facility density watchlist
-```
-
-### Validation
-
-Confirmed:
-
-```text
-/population returns 47 counties
-/access-density returns 47 counties
-No missing population rows
-No duplicate county rows
-No failed county joins
-Existing V1 endpoints still work
-Production frontend build passes
+47 counties
 ```
 
 ---
 
-## Task 2: County Explorer Comparison Tool
+## County Name Normalization
 
-### Objective
+Task 1 added county name normalization support.
 
-Add a county-level comparison tool that allows users to compare any two counties side by side.
-
-This improves the dashboard’s value for planning discussions by helping users see county differences across population, facility access, ownership mix, and service coverage.
-
-### Frontend Page Added
-
-Created:
+File:
 
 ```text
-frontend/src/pages/CountyExplorer.jsx
+backend/utils.py
 ```
 
-This page:
+Normalization handles county naming differences such as:
 
 ```text
-Fetches access-density data
-Fetches county ownership data
-Fetches service-gap-score data
-Stores full datasets in state
-Passes data into the comparison component
-Handles loading and error states
+TAITA/TAVETA → Taita Taveta
+ELGEYO/MARAKWET → Elgeyo Marakwet
+THARAKA-NITHI → Tharaka Nithi
+HOMA BAY → Homa Bay
+TRANS NZOIA → Trans Nzoia
+MURANG’A → Murang’a
 ```
 
-### Comparison Component Added
-
-Created:
-
-```text
-frontend/src/components/CountyComparisonTool.jsx
-```
-
-This component:
-
-```text
-Provides two county dropdown selectors
-Defaults to Nairobi and Turkana
-Prevents same-county comparisons
-Displays summary cards for both selected counties
-Displays grouped comparison metrics
-Highlights the higher numeric value where comparison is meaningful
-Keeps ownership mix descriptive without winner highlighting
-Uses county-name normalization to avoid filtering mismatches
-```
-
-### Route Added
-
-Updated:
-
-```text
-frontend/src/App.jsx
-```
-
-Added route:
-
-```text
-/county-explorer
-```
-
-Live page:
-
-```text
-https://kenya-health-dashboard.vercel.app/county-explorer
-```
-
-### Dashboard Navigation Added
-
-Updated:
-
-```text
-frontend/src/pages/Dashboard.jsx
-```
-
-Added a `County Explorer` navigation button beside the existing `County Map` button.
+This reduced join errors between facility data and population data.
 
 ---
 
-## Task 3: County Insight Briefs
+## Metrics Added
 
-### Objective
-
-Add short written interpretations to the County Explorer page so users can understand what the selected county comparison means.
-
-This turns the County Explorer from a metrics display into a planning interpretation tool.
-
-### Frontend Component Added
-
-Created:
+Task 1 added:
 
 ```text
-frontend/src/components/CountyInsightBrief.jsx
-```
-
-The component generates three planning notes:
-
-```text
-Facility access
-Geography context
-Service coverage
-```
-
-### Placement
-
-The County Insight Brief appears on the County Explorer page between:
-
-```text
-summary cards
-comparison metrics table
-```
-
-### What the Brief Explains
-
-The brief helps users interpret:
-
-```text
-which county has stronger facility density
-how land area and population density affect access interpretation
-which county has stronger selected service coverage
-```
-
-### Example Insight
-
-```text
-Nairobi has higher facility density than Turkana, while Turkana has the larger land area. This suggests that geographic access may remain a planning issue even when facility-per-population metrics are compared directly.
-```
-
-### Value Added
-
-County Insight Briefs make the dashboard easier to understand for non-technical users by translating numeric differences into planning language.
-
-This improves the dashboard for:
-
-```text
-planning discussions
-portfolio review
-public health storytelling
-county-level comparison
-stakeholder communication
-```
-
-### Testing
-
-Confirmed:
-
-```text
-County Insight Brief appears on the County Explorer page
-Insight text updates when selected counties change
-Same-county guard still works
-Comparison metrics table still works
-Production build passes
-```
-
----
-
-## Task 4: Downloadable County Comparison Reports
-
-### Objective
-
-Add a report export workflow to the County Explorer so users can save selected county comparisons for planning discussions, team review, offline use, and portfolio demonstration.
-
-### Frontend Component Added
-
-Created:
-
-```text
-frontend/src/components/CountyComparisonReportButton.jsx
-```
-
-This component adds a:
-
-```text
-Print / Save Report
-```
-
-button to the County Explorer comparison panel.
-
-### Placement
-
-The report button appears near the county selectors inside the County Explorer comparison card.
-
-It uses the currently selected counties and generates a clean printable report in a new browser window.
-
-### Report Includes
-
-The generated report includes:
-
-```text
-selected county names
-generation timestamp
-population
-total facilities
-facility density per 100,000 people
-land area
-population density
-ownership mix
-service coverage metrics
-planning note
-dashboard links
-```
-
-### Technical Approach
-
-The feature is frontend-only.
-
-It does not add:
-
-```text
-new backend endpoints
-new PDF libraries
-new server-side report generation
-```
-
-Instead, it uses the browser print workflow.
-
-Users can choose:
-
-```text
-Print
-Save as PDF
-```
-
-from the browser print dialog.
-
-### Value Added
-
-This feature makes the County Explorer more useful for:
-
-```text
-planning discussions
-stakeholder review
-team presentations
-offline analysis
-portfolio demonstration
-public health reporting
-```
-
-### Testing
-
-Confirmed:
-
-```text
-Print / Save Report button appears on the County Explorer page
-Report opens in a new browser window
-Report includes selected county summary metrics
-Report includes comparison metrics table
-Browser print dialog opens
-Report can be saved as PDF
-Production build passes
-```
-
----
-
-## County Explorer Metrics
-
-The County Explorer compares counties using the following groups.
-
-### Population & Geography
-
-```text
-Population 2019
-Land area
-Population density per km²
-```
-
-### Facility Access
-
-```text
-Total facilities
 Facilities per 100,000 people
 Public facilities per 100,000 people
 ART facilities per 100,000 people
 ```
 
-### Ownership Mix
+These metrics help compare county access while accounting for population size.
+
+---
+
+## Frontend Section Added
+
+Component:
 
 ```text
-% Public
-% Private
-% Faith-Based
+frontend/src/components/AccessDensitySection.jsx
 ```
 
-### Service Coverage
+User-facing title:
 
 ```text
-Overall coverage score
-FP coverage
-ART coverage
-C-IMCI coverage
-IPD coverage
-HBC coverage
+Population-Adjusted Access
+```
+
+The section shows:
+
+```text
+National access metrics
+Access-density watchlists
+Lowest facility density counties
+Lowest public facility density counties
+Lowest ART facility density counties
 ```
 
 ---
 
-## Technical Design Decisions
+## Why Task 1 Matters
 
-### Frontend-Only County Comparison
+Task 1 moved the dashboard from descriptive analytics into planning-oriented analytics.
 
-The County Explorer uses existing endpoints instead of adding a new backend comparison endpoint.
+Example:
 
-Endpoints used:
+```text
+A county may have many facilities in raw numbers, but still have low access when compared against population size.
+```
+
+This matters for health planning because access depends on both supply and population need.
+
+---
+
+# Task 2: County Explorer Comparison Tool
+
+## Goal
+
+Task 2 added a dedicated page for comparing two counties side by side.
+
+Page:
+
+```text
+/county-explorer
+```
+
+The goal was to help users compare counties using access, ownership, geography, and service coverage indicators.
+
+---
+
+## Frontend Page Added
+
+File:
+
+```text
+frontend/src/pages/CountyExplorer.jsx
+```
+
+The page fetches:
 
 ```text
 /access-density
@@ -507,105 +334,500 @@ Endpoints used:
 /service-gap-score
 ```
 
-Reason:
+The implementation follows a frontend-first approach.
+
+Data is fetched once, then filtered in React for selected counties.
+
+---
+
+## Component Added
+
+Main comparison component:
 
 ```text
-Each dataset has only 47 county-level records.
-The frontend can fetch all data once and filter in React state.
-A new backend endpoint would add complexity without clear value at this stage.
+frontend/src/components/CountyComparisonTool.jsx
 ```
 
-### Fetch Once, Filter Locally
+The tool allows users to select two counties and compare them side by side.
 
-The County Explorer fetches the three datasets once when the page loads.
+---
 
-County selection changes do not trigger new API calls.
+## Metrics Compared
 
-This keeps the page fast and avoids unnecessary backend requests.
-
-### County Name Normalization
-
-A frontend county-name normalizer was added to prevent filtering issues caused by apostrophes and casing differences.
-
-This is especially important for county names such as:
+The County Explorer compares:
 
 ```text
-Murang'a
-Murang'A
+Population
+Land area
+Population density
+Total facilities
+Facilities per 100,000 people
+Public facilities per 100,000 people
+ART facilities per 100,000 people
+Service gap score
+Ownership mix
+Selected service coverage indicators
 ```
 
-### Derived Insight Text
+---
 
-County Insight Briefs are generated from the selected county data already available inside the County Explorer.
+## Design Value
 
-No new backend endpoint was needed.
+The County Explorer improves the dashboard’s value for planning discussions by helping users see county differences quickly.
 
-The insight brief uses:
+It makes comparison easier than scanning national tables.
+
+---
+
+## Why Task 2 Matters
+
+Task 2 made the dashboard more interactive and useful for focused analysis.
+
+Instead of asking:
 
 ```text
-facility density
-land area
-population density
-overall service coverage score
+What does the national picture look like?
 ```
 
-This keeps the feature simple, fast, and frontend-only.
+Users can ask:
 
-### Browser-Based Report Export
+```text
+How does County A compare with County B?
+```
 
-Downloadable County Comparison Reports use the browser print workflow.
+This supports portfolio storytelling, county-level planning, and data interpretation.
 
-The report is generated client-side from the same selected county data already loaded in the County Explorer.
+---
 
-No new backend endpoint or PDF library was added.
+# Task 3: County Insight Briefs
 
-This keeps the feature lightweight and easy to maintain.
+## Goal
+
+Task 3 added interpretation support to the County Explorer.
+
+The goal was to help users understand what the comparison means, not just view numbers.
+
+---
+
+## Component Added
+
+File:
+
+```text
+frontend/src/components/CountyInsightBrief.jsx
+```
+
+---
+
+## Insight Areas
+
+The insight brief provides interpretation across:
+
+```text
+Facility access
+Public-sector access
+ART access
+Geography
+Population density
+Ownership mix
+Service coverage
+```
+
+---
+
+## Example Interpretation Areas
+
+The insight brief can explain patterns such as:
+
+```text
+One county has higher facility access per 100,000 people.
+One county has stronger public-sector access.
+One county has stronger ART facility availability.
+One county has higher population density.
+One county has stronger private or public ownership presence.
+```
+
+---
+
+## Why Task 3 Matters
+
+Task 3 improved usability.
+
+Many dashboards show charts but leave interpretation to the user.
+
+This feature helps users read the data faster and reduces cognitive load.
+
+It also makes the project stronger for healthcare workflow and product storytelling because it shows how analytics can support decision-making.
+
+---
+
+# Task 4: Downloadable County Comparison Reports
+
+## Goal
+
+Task 4 added printable reporting from the County Explorer.
+
+The goal was to let users export county comparisons into a practical format for review, sharing, or documentation.
+
+---
+
+## Component Added
+
+File:
+
+```text
+frontend/src/components/CountyComparisonReportButton.jsx
+```
+
+---
+
+## Report Includes
+
+The downloadable report includes:
+
+```text
+Selected counties
+Summary metrics
+Comparison table
+Insight brief
+Timestamp
+Dashboard links
+```
+
+---
+
+## Report Use Cases
+
+The report can support:
+
+```text
+team discussions
+student project presentation
+portfolio demonstration
+planning review
+county comparison documentation
+```
+
+---
+
+## Why Task 4 Matters
+
+Task 4 moved the dashboard beyond screen-based exploration.
+
+It created a shareable output that users can print or save.
+
+This helps explain the project to reviewers and team members.
+
+---
+
+# Supporting Release: v2.3.0 Backend Hardening and Mobile Polish
+
+## Goal
+
+The v2.3.0 release improved production readiness before adding the ownership market dynamics layer.
+
+---
+
+## Main Improvements
+
+v2.3.0 included:
+
+```text
+backend API validation
+security hardening
+API version cleanup
+mobile UI polish
+stable production checkpoint
+```
+
+---
+
+## Backend Health Check
+
+The backend includes:
+
+```text
+/health
+```
+
+This supports basic uptime and deployment verification.
+
+---
+
+## Why v2.3.0 Matters
+
+This release made the project safer and more stable before adding more dashboard complexity.
+
+It also improved the reliability of the public API and frontend experience.
+
+---
+
+# Task 5: Ownership & Market Dynamics Analysis
+
+## Goal
+
+Task 5 extends Version 2 from population-adjusted access analysis into ownership-based healthcare market interpretation.
+
+The project question asks:
+
+> To what extent does the county-level distribution of healthcare facilities in Kenya reflect both public health need and healthcare market dynamics?
+
+Earlier V2 tasks addressed the public health need side by comparing facility access against population size, geography, service coverage, and county-level planning context.
+
+Task 5 addresses the market dynamics side by analyzing county-level facility ownership mix.
+
+---
+
+## User-Facing Section
+
+Added dashboard section:
+
+```text
+Ownership & Market Dynamics
+```
+
+---
+
+## Component Added
+
+File:
+
+```text
+frontend/src/components/MarketDynamicsSection.jsx
+```
+
+The component is imported into:
+
+```text
+frontend/src/pages/Dashboard.jsx
+```
+
+---
+
+## Data Sources Used
+
+Task 5 uses existing API data.
+
+No new dataset was required.
+
+Endpoints used:
+
+```text
+/counties
+/access-density
+```
+
+The `/counties` endpoint provides county-level ownership totals including:
+
+```text
+public
+private
+faith_based
+ngo
+community
+academic
+total
+```
+
+The `/access-density` endpoint provides population-adjusted facility access values.
+
+---
+
+## Metrics Added
+
+Task 5 computes ownership percentages in React:
+
+```text
+Private share = private facilities / total facilities × 100
+Public share = public facilities / total facilities × 100
+Faith/NGO share = (faith_based + ngo) / total facilities × 100
+```
+
+---
+
+## Dashboard Outputs
+
+The section shows:
+
+```text
+1. Counties with the highest private facility share
+2. Counties with the highest public facility share
+3. Counties with the strongest faith-based/NGO presence
+4. Counties with low facility density and ownership imbalance
+5. Simple market interpretation labels per county
+```
+
+---
+
+## Interpretation Logic
+
+The dashboard uses ownership mix to provide simple county-level interpretation labels.
+
+Examples:
+
+```text
+High private share may suggest stronger healthcare market activity.
+High public share may suggest public-sector dependence.
+High faith/NGO share may suggest mission-driven or community-supported service delivery.
+Balanced private/public ownership may suggest mixed healthcare provision.
+```
+
+---
+
+## Why Task 5 Matters
+
+Task 5 strengthens the dashboard because facility distribution is not only a public access issue.
+
+Ownership patterns help explain how healthcare delivery is structured across counties.
+
+A county with many private facilities may reflect stronger market activity, urban demand, or higher ability to pay.
+
+A county with high public-sector dependence may reflect greater reliance on government service delivery.
+
+A county with strong faith-based or NGO presence may reflect mission-supported care, community-based delivery, or historical service networks.
+
+This gives the project a stronger analytical answer to the original research question by combining:
+
+```text
+Population-adjusted access
+County comparison
+Service coverage
+Ownership mix
+Market interpretation
+```
+
+---
+
+## Implementation Approach
+
+Task 5 was implemented frontend-first.
+
+This kept the task safe and fast because the required ownership totals already existed in the `/counties` API response.
+
+No backend changes were needed.
+
+---
+
+## Files Changed
+
+```text
+frontend/src/components/MarketDynamicsSection.jsx
+frontend/src/pages/Dashboard.jsx
+```
+
+---
+
+## Release
+
+Task 5 was released as:
+
+```text
+v2.4.0
+```
+
+---
+
+# Technical Summary
+
+## Backend Files
+
+Key backend files:
+
+```text
+backend/main.py
+backend/utils.py
+backend/data/county_population.csv
+backend/requirements.txt
+```
+
+---
+
+## Frontend Files
+
+Key frontend files:
+
+```text
+frontend/src/pages/Dashboard.jsx
+frontend/src/pages/CountyExplorer.jsx
+frontend/src/components/AccessDensitySection.jsx
+frontend/src/components/CountyComparisonTool.jsx
+frontend/src/components/CountyInsightBrief.jsx
+frontend/src/components/CountyComparisonReportButton.jsx
+frontend/src/components/MarketDynamicsSection.jsx
+```
+
+---
+
+## Main API Endpoints Used in V2
+
+| Endpoint             | Purpose                                       |
+| -------------------- | --------------------------------------------- |
+| `/population`        | County population data                        |
+| `/access-density`    | Population-adjusted facility access           |
+| `/counties`          | County-level facility and ownership summaries |
+| `/service-gap-score` | Multi-service county gap scoring              |
+| `/health`            | Backend health check                          |
 
 ---
 
 ## Testing Completed
 
-Confirmed locally:
+The following checks were completed across V2 tasks:
 
 ```text
-/county-explorer route loads
-Nairobi vs Turkana loads by default
-Dropdown selectors show county options
-Summary cards render correctly
-County Insight Brief renders correctly
-County Insight Brief updates when selected counties change
-Metrics table renders correctly
-Same-county guard works
-Higher-value highlighting works
-Print / Save Report button appears
-Printable report opens in a new browser window
-Browser print dialog opens
-Report can be saved as PDF
-County Explorer button appears on the homepage
-Production build passes
-```
-
-Build command:
-
-```bash
-npm run build
-```
-
-Build result:
-
-```text
-✓ built successfully
-```
-
-Note:
-
-```text
-The build shows a large chunk-size warning, but the build succeeds. This can be improved later through route-level code splitting.
+Backend starts locally
+Frontend starts locally
+Production backend responds
+Production frontend loads
+/counties endpoint returns county data
+/population endpoint returns 47 rows
+/access-density endpoint returns 47 rows
+County Explorer loads
+County comparison works
+Population-Adjusted Access section renders
+Ownership & Market Dynamics section renders
+Printable report button works
+Frontend build passes
+Git branches merged into main
+Release tags created and aligned
 ```
 
 ---
 
-## Current V2 Status
+## Production Verification
+
+Production frontend:
+
+```text
+https://kenya-health-dashboard.vercel.app/
+```
+
+Production backend:
+
+```text
+https://kenya-health-dashboard-api.onrender.com/
+```
+
+API docs:
+
+```text
+https://kenya-health-dashboard-api.onrender.com/docs
+```
+
+Verified production features:
+
+```text
+Dashboard homepage
+Population-Adjusted Access
+County Explorer
+County comparison
+Printable reports
+Ownership & Market Dynamics
+```
+
+---
+
+# Current V2 Status
 
 Completed:
 
@@ -614,107 +836,310 @@ V2 Task 1: Population-Adjusted Access
 V2 Task 2: County Explorer Comparison Tool
 V2 Task 3: County Insight Briefs
 V2 Task 4: Downloadable County Comparison Reports
+V2 Task 5: Ownership & Market Dynamics Analysis
 ```
 
-The dashboard now supports:
+Current release:
 
 ```text
-National facility overview
-County facility distribution
-Population-adjusted facility access
-County-to-county comparison
-Ownership mix analysis
-Service coverage comparison
-Plain-language county insight briefs
-Printable county comparison reports
-Save-as-PDF report workflow
+v2.4.0
+```
+
+Current status:
+
+```text
+Version 2 complete
 ```
 
 ---
 
-## Impact
+# Analytical Value Added
 
-Version 2 makes the project stronger because it moves from simple counting to access analysis, planning interpretation, and report sharing.
+Version 2 adds a stronger planning layer to the dashboard.
 
-The dashboard can now support questions such as:
+The dashboard now combines:
 
 ```text
-Which counties have fewer facilities relative to population size?
-Which counties have stronger public facility availability?
-How do two counties compare across facility access and service coverage?
-Where might population size and geographic spread affect healthcare access?
-What does a county comparison mean in simple planning language?
-How can county comparison outputs be shared with a team or reviewer?
+Raw facility distribution
+Population-adjusted access
+Public-sector access
+ART access
+Service availability
+Ownership mix
+Market dynamics
+County comparison
+Plain-language interpretation
+Printable reporting
 ```
 
-This improves the project for:
+This makes the dashboard useful for:
 
 ```text
-healthcare planning
+health planning discussion
 county comparison
-public health storytelling
-portfolio demonstration
-data analytics review
-non-technical stakeholder communication
-offline reporting
+student project presentation
+portfolio review
+healthcare analytics demonstration
+data cleaning demonstration
+product thinking demonstration
 ```
 
 ---
 
-## Recommended Next Feature
+# Portfolio Interpretation
 
-Recommended next task:
+This project demonstrates the ability to turn fragmented healthcare facility data into a structured analytics product.
 
-```text
-V2 Task 5: County Planning Priority Index
-```
-
-This would combine facility access, population density, public facility availability, ART access, and service coverage into a planning-priority score.
-
-The goal would be to help users identify counties that may need closer review based on multiple indicators, not just one metric.
-
-Possible inputs:
+Key skills demonstrated:
 
 ```text
-facilities per 100,000 people
-public facilities per 100,000 people
-ART facilities per 100,000 people
-overall service coverage score
-population density
-land area
+data cleaning
+county name normalization
+API design
+React dashboard development
+population-adjusted analysis
+service gap analysis
+ownership analysis
+market interpretation
+frontend state management
+production deployment
+release management
+technical documentation
 ```
 
-This would move the dashboard from comparison into prioritization.
+The strongest portfolio story is:
+
+```text
+The project started as a facility dashboard, then evolved into a planning intelligence tool that compares healthcare access, service coverage, and ownership market structure across Kenyan counties.
+```
 
 ---
 
-## Release Notes
+# Limitations
 
-### v2.0.0
+The dashboard has useful planning indicators, but it does not prove causation.
+
+Known limitations:
+
+```text
+Facility presence does not guarantee service quality.
+Facility counts do not measure staffing levels.
+Facility counts do not measure equipment availability.
+Population-adjusted access does not fully capture travel time or road access.
+Ownership mix does not directly measure affordability.
+Service availability fields depend on source data completeness.
+```
+
+These limitations should be stated when presenting the project.
+
+---
+
+# Recommended Next Feature
+
+Recommended next phase:
+
+```text
+V3: County Planning Priority Index
+```
+
+V3 should combine the strongest signals from Version 2 into a single planning score.
+
+Potential inputs:
+
+```text
+1. Facilities per 100,000 people
+2. Public facilities per 100,000 people
+3. ART facilities per 100,000 people
+4. Service gap score
+5. Ownership imbalance
+6. Population density
+7. Total population
+```
+
+The goal would be to help users identify counties that may need closer planning attention based on access, service coverage, population pressure, and ownership structure.
+
+---
+
+# Suggested V3 Output
+
+A County Planning Priority Index could show:
+
+```text
+Highest planning priority counties
+Lowest access counties
+Counties with high population pressure
+Counties with public-sector dependence
+Counties with high ownership imbalance
+Counties with weak selected service coverage
+```
+
+This would make the dashboard more actionable while staying aligned with the original project question.
+
+---
+
+# Release Notes
+
+## v1.0.0
+
+Released:
+
+```text
+Initial full-stack dashboard
+```
+
+Included:
+
+```text
+Facility distribution
+Ownership analysis
+Service availability
+Facility Finder
+CSV export
+County map
+FastAPI backend
+React frontend
+Production deployment
+```
+
+---
+
+## v2.0.0
 
 Released:
 
 ```text
 Population-Adjusted Access
+```
+
+Included:
+
+```text
+County population dataset
+Population endpoint
+Access-density endpoint
+Facilities per 100,000 people
+Public facilities per 100,000 people
+ART facilities per 100,000 people
+Access-density watchlists
+```
+
+---
+
+## v2.1.0
+
+Released:
+
+```text
 County Explorer Comparison Tool
 ```
 
-### v2.1.0
-
-Added:
+Included:
 
 ```text
-County Insight Briefs
+County Explorer page
+Two-county selectors
+Access comparison
+Population comparison
+Ownership mix comparison
+Service gap comparison
 ```
 
-This enhancement extends the County Explorer with plain-language planning interpretations for selected county comparisons.
+---
 
-### v2.2.0
+## v2.2.0
 
-Added:
+Released:
 
 ```text
-Printable County Comparison Reports
+County Insight Briefs and Printable Reports
 ```
 
-This enhancement allows users to print or save selected county comparisons as PDF reports using the browser print workflow.
+Included:
+
+```text
+County insight brief component
+Plain-language county comparison interpretation
+Printable county comparison report
+Report timestamp
+Dashboard links
+```
+
+---
+
+## v2.2.1
+
+Released:
+
+```text
+Documentation and release polish
+```
+
+Included:
+
+```text
+Documentation refinements
+Report cleanup
+Release alignment
+```
+
+---
+
+## v2.3.0
+
+Released:
+
+```text
+Backend hardening, mobile polish, and API standardization
+```
+
+Included:
+
+```text
+API validation improvements
+Security hardening
+Version reporting cleanup
+Mobile UI polish
+Production stability improvements
+```
+
+---
+
+## v2.4.0
+
+Released:
+
+```text
+Ownership & Market Dynamics Analysis
+```
+
+Included:
+
+```text
+Ownership & Market Dynamics dashboard section
+Private ownership share analysis
+Public ownership share analysis
+Faith-based/NGO ownership share analysis
+Low facility density + ownership imbalance table
+County-level market interpretation labels
+```
+
+---
+
+# Final V2 Summary
+
+Version 2 is complete.
+
+It adds a stronger planning and interpretation layer to the Kenya Health Facilities Dashboard.
+
+The dashboard now answers the project question more directly by combining:
+
+```text
+public health need indicators
+population-adjusted access
+service coverage
+county comparison
+ownership mix
+market dynamics
+```
+
+This makes the project stronger as a healthcare data analytics portfolio project and as a practical demonstration of workflow-first healthcare intelligence.
