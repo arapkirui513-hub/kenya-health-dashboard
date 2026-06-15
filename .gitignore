@@ -41,3 +41,4 @@ Thumbs.db
 # backend/data/*.xlsx
 # backend/data/*.xls
 # backend/data/*.csv
+.venv312/
