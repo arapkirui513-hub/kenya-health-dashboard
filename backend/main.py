@@ -23,7 +23,7 @@ from data_loader import (
 )
 
 
-API_VERSION = "v3.0.0-dev"
+API_VERSION = "v3.0.0"
 
 ALLOWED_ORIGINS = [
     "https://kenya-health-dashboard.vercel.app",

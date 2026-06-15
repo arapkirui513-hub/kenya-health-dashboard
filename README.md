@@ -30,6 +30,77 @@ https://github.com/arapkirui513-hub/kenya-health-dashboard
 
 ---
 
+## Version 3 Update
+
+Version 3 turns the dashboard from analysis into prioritization.
+
+Version 3 helps answer:
+
+```text
+Which counties should planners pay attention to first?
+```
+
+Core V3 feature:
+
+```text
+County Planning Priority Index
+```
+
+The index ranks all 47 counties using a score from 0 to 100.
+
+Higher scores indicate higher planning priority.
+
+Priority levels:
+
+```text
+High: 70–100
+Medium: 40–69
+Low: 0–39
+```
+
+V3 scoring formula:
+
+```text
+Priority Score =
+Access Risk × 0.40
++ Service Risk × 0.30
++ Ownership Risk × 0.20
++ Population Pressure × 0.10
+```
+
+New V3 features:
+
+* County Planning Priority Index
+* New backend endpoint: `/planning-priority-index`
+* Access risk scoring
+* Service risk scoring
+* Ownership risk scoring
+* Population pressure scoring
+* Reason flags explaining planning signals
+* Main dashboard priority index section
+* Top 10 planning priority counties
+* High / Medium / Low priority summary cards
+* County Explorer priority score integration
+* Side-by-side priority comparison between two counties
+* Python runtime pinned for stable Render deployment
+
+Production validation:
+
+```text
+/planning-priority-index returns 47 counties
+Live dashboard shows County Planning Priority Index
+County Explorer shows planning priority cards and comparison metrics
+```
+
+V3 Completion Report:
+
+```text
+docs/V3_COMPLETION_REPORT.md
+```
+
+---
+
+
 ## Version 2 Update
 
 Version 2 expands the dashboard from facility distribution analytics into population-adjusted healthcare access analysis, county comparison, planning interpretation, printable reporting, backend reliability, mobile polish, and ownership-based market dynamics analysis.
