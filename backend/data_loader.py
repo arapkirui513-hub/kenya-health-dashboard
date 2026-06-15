@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 DATA_FILE = Path(__file__).parent / "data" / "cleaned_health_facilities_kenya.xlsx"
 POPULATION_FILE = Path(__file__).parent / "data" / "county_population.csv"
+KDHS_INDICATORS_FILE = Path(__file__).parent / "data" / "kdhs_2022_county_indicators.csv"
 
 EXPECTED_COUNTY_COUNT = 47
 EXPECTED_POPULATION_TOTAL = 47_564_296
@@ -28,6 +29,18 @@ REQUIRED_POPULATION_COLUMNS = [
     "households_2019",
     "area_km2",
     "density_per_km2",
+]
+
+
+REQUIRED_KDHS_INDICATOR_COLUMNS = [
+    "county",
+    "teenage_pregnancy_pct",
+    "modern_contraceptive_use_pct",
+    "unmet_need_family_planning_pct",
+    "anc_4plus_visits_pct",
+    "skilled_delivery_pct",
+    "facility_delivery_pct",
+    "fully_vaccinated_basic_pct",
 ]
 
 
@@ -310,6 +323,75 @@ def load_population_data():
     return population_df.reset_index(drop=True)
 
 
+def load_kdhs_indicator_data():
+    _assert_file_exists(KDHS_INDICATORS_FILE, "KDHS 2022 indicator dataset")
+
+    kdhs_df = pd.read_csv(KDHS_INDICATORS_FILE)
+
+    _validate_required_columns(
+        kdhs_df,
+        REQUIRED_KDHS_INDICATOR_COLUMNS,
+        "KDHS 2022 indicator dataset",
+    )
+
+    kdhs_df = kdhs_df[REQUIRED_KDHS_INDICATOR_COLUMNS].copy()
+
+    kdhs_df["county"] = kdhs_df["county"].apply(_clean_text_value)
+    kdhs_df["_county_key"] = kdhs_df["county"].apply(normalize_county_name)
+
+    numeric_columns = [
+        column
+        for column in REQUIRED_KDHS_INDICATOR_COLUMNS
+        if column != "county"
+    ]
+
+    for column in numeric_columns:
+        kdhs_df[column] = pd.to_numeric(kdhs_df[column], errors="coerce")
+
+    if kdhs_df[numeric_columns].isna().any().any():
+        bad_rows = kdhs_df[
+            kdhs_df[numeric_columns].isna().any(axis=1)
+        ][["county"] + numeric_columns]
+
+        _raise_data_validation_error(
+            "KDHS 2022 indicator dataset has non-numeric or missing values.",
+            detail=bad_rows.to_dict(orient="records"),
+        )
+
+    out_of_range_mask = (
+        (kdhs_df[numeric_columns] < 0)
+        | (kdhs_df[numeric_columns] > 100)
+    )
+
+    if out_of_range_mask.any().any():
+        bad_rows = kdhs_df[out_of_range_mask.any(axis=1)][
+            ["county"] + numeric_columns
+        ]
+
+        _raise_data_validation_error(
+            "KDHS 2022 indicator values must be between 0 and 100.",
+            detail=bad_rows.to_dict(orient="records"),
+        )
+
+    duplicate_counties = kdhs_df[
+        kdhs_df.duplicated(subset=["_county_key"], keep=False)
+    ]["county"].tolist()
+
+    if duplicate_counties:
+        _raise_data_validation_error(
+            "KDHS 2022 indicator dataset has duplicate normalized county names.",
+            detail=duplicate_counties,
+        )
+
+    if len(kdhs_df) != EXPECTED_COUNTY_COUNT:
+        _raise_data_validation_error(
+            f"Expected {EXPECTED_COUNTY_COUNT} KDHS indicator rows.",
+            detail=f"Found {len(kdhs_df)} rows.",
+        )
+
+    return kdhs_df.reset_index(drop=True)
+
+
 def _build_access_density_df():
     facility_totals = (
         df.groupby("_county_canonical")
@@ -499,15 +581,16 @@ def _load_app_data():
     try:
         facilities_df = load_facility_data()
         population_df = load_population_data()
+        kdhs_indicators_df = load_kdhs_indicator_data()
 
-        return facilities_df, population_df
+        return facilities_df, population_df, kdhs_indicators_df
 
     except Exception as exc:
         logger.exception("Application data failed to load.")
         raise RuntimeError("Application data failed to load.") from exc
 
 
-df, df_population = _load_app_data()
+df, df_population, df_kdhs_indicators = _load_app_data()
 
 try:
     _validate_startup_data()
@@ -709,6 +792,16 @@ def get_population_data():
     population_data = population_data[output_columns].sort_values("county")
 
     return _prepare_records(population_data)
+
+
+def get_kdhs_indicators():
+    kdhs_data = df_kdhs_indicators.copy()
+
+    output_columns = REQUIRED_KDHS_INDICATOR_COLUMNS
+
+    kdhs_data = kdhs_data[output_columns].sort_values("county")
+
+    return _prepare_records(kdhs_data)
 
 
 def get_access_density():

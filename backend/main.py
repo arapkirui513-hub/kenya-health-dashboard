@@ -18,6 +18,7 @@ from data_loader import (
     get_facilities_export,
     get_service_gap_score,
     get_population_data,
+    get_kdhs_indicators,
     get_access_density,
     get_planning_priority_index,
 )
@@ -136,6 +137,12 @@ def service_gap_score(request: Request):
 @limiter.limit("60/minute")
 def population(request: Request):
     return get_population_data()
+
+
+@app.get("/kdhs-indicators")
+@limiter.limit("60/minute")
+def kdhs_indicators(request: Request):
+    return get_kdhs_indicators()
 
 
 @app.get("/access-density")
