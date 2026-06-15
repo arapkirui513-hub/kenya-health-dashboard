@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import AccessDensitySection from "../components/AccessDensitySection"
+import PriorityIndexSection from "../components/PriorityIndexSection"
 import { API_BASE } from "../config/api"
 import MarketDynamicsSection from "../components/MarketDynamicsSection"
 import {
@@ -529,6 +530,8 @@ function Dashboard() {
             </section>
 
             <AccessDensitySection apiBase={API_BASE} />
+
+            <PriorityIndexSection apiBase={API_BASE} />
 
             <MarketDynamicsSection /> 
             
