@@ -367,7 +367,6 @@ export default function CountyComparisonReportButton({
       return
     }
 
-    reportWindow.opener = null
     reportWindow.document.open()
     reportWindow.document.write(reportHtml)
     reportWindow.document.close()
