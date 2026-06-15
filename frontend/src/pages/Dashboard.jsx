@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import axios from "axios"
 import AccessDensitySection from "../components/AccessDensitySection"
 import { API_BASE } from "../config/api"
+import MarketDynamicsSection from "../components/MarketDynamicsSection"
 import {
   PieChart,
   Pie,
@@ -529,6 +530,8 @@ function Dashboard() {
 
             <AccessDensitySection apiBase={API_BASE} />
 
+            <MarketDynamicsSection /> 
+            
             <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
               <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
                 Facility Finder
