@@ -21,6 +21,7 @@ from data_loader import (
     get_kdhs_indicators,
     get_access_density,
     get_planning_priority_index,
+    get_health_need_index,
 )
 
 
@@ -143,6 +144,12 @@ def population(request: Request):
 @limiter.limit("60/minute")
 def kdhs_indicators(request: Request):
     return get_kdhs_indicators()
+
+
+@app.get("/health-need-index")
+@limiter.limit("60/minute")
+def health_need_index(request: Request):
+    return get_health_need_index()
 
 
 @app.get("/access-density")

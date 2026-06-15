@@ -804,6 +804,121 @@ def get_kdhs_indicators():
     return _prepare_records(kdhs_data)
 
 
+def _clamp_score(value, minimum=0.0, maximum=100.0):
+    """Keep calculated scores inside a safe 0-100 range."""
+    return max(minimum, min(maximum, value))
+
+
+def _get_health_need_level(score):
+    """Convert health need score into a simple planning label."""
+    if score >= 60:
+        return "High Health Need"
+    if score >= 35:
+        return "Moderate Health Need"
+    return "Lower Health Need"
+
+
+def _get_health_need_reason_flags(row):
+    """Create human-readable explanation flags for high-need signals."""
+    flags = []
+
+    if row["teenage_pregnancy_pct"] >= 20:
+        flags.append("High teenage pregnancy")
+
+    if row["unmet_need_family_planning_pct"] >= 20:
+        flags.append("High unmet need for family planning")
+
+    if row["modern_contraceptive_use_pct"] < 50:
+        flags.append("Low modern contraceptive use")
+
+    if row["anc_4plus_visits_pct"] < 50:
+        flags.append("Low ANC 4+ visit coverage")
+
+    if row["skilled_delivery_pct"] < 80:
+        flags.append("Low skilled delivery coverage")
+
+    if row["facility_delivery_pct"] < 70:
+        flags.append("Low facility delivery coverage")
+
+    if row["fully_vaccinated_basic_pct"] < 70:
+        flags.append("Low basic vaccination coverage")
+
+    return flags
+
+
+def get_health_need_index():
+    """
+    Calculate the V4 Health Need Index from KDHS 2022 county indicators.
+
+    Higher score means higher estimated health need.
+    """
+    kdhs_data = df_kdhs_indicators.copy()
+    records = []
+
+    for _, row in kdhs_data.iterrows():
+        teenage_pregnancy = float(row["teenage_pregnancy_pct"])
+        modern_contraceptive_use = float(row["modern_contraceptive_use_pct"])
+        unmet_need_fp = float(row["unmet_need_family_planning_pct"])
+        anc_4plus = float(row["anc_4plus_visits_pct"])
+        skilled_delivery = float(row["skilled_delivery_pct"])
+        facility_delivery = float(row["facility_delivery_pct"])
+        fully_vaccinated = float(row["fully_vaccinated_basic_pct"])
+
+        teenage_pregnancy_risk = teenage_pregnancy
+
+        family_planning_need_risk = (
+            unmet_need_fp * 0.60
+            + (100 - modern_contraceptive_use) * 0.40
+        )
+
+        maternal_care_gap_risk = (
+            (100 - anc_4plus) * 0.35
+            + (100 - skilled_delivery) * 0.35
+            + (100 - facility_delivery) * 0.30
+        )
+
+        child_immunization_gap_risk = 100 - fully_vaccinated
+
+        health_need_score = (
+            teenage_pregnancy_risk * 0.15
+            + family_planning_need_risk * 0.25
+            + maternal_care_gap_risk * 0.40
+            + child_immunization_gap_risk * 0.20
+        )
+
+        health_need_score = round(_clamp_score(health_need_score), 2)
+
+        record = {
+            "county": row["county"],
+            "health_need_score": health_need_score,
+            "health_need_level": _get_health_need_level(health_need_score),
+            "component_scores": {
+                "teenage_pregnancy_risk": round(_clamp_score(teenage_pregnancy_risk), 2),
+                "family_planning_need_risk": round(_clamp_score(family_planning_need_risk), 2),
+                "maternal_care_gap_risk": round(_clamp_score(maternal_care_gap_risk), 2),
+                "child_immunization_gap_risk": round(_clamp_score(child_immunization_gap_risk), 2),
+            },
+            "input_metrics": {
+                "teenage_pregnancy_pct": round(teenage_pregnancy, 2),
+                "modern_contraceptive_use_pct": round(modern_contraceptive_use, 2),
+                "unmet_need_family_planning_pct": round(unmet_need_fp, 2),
+                "anc_4plus_visits_pct": round(anc_4plus, 2),
+                "skilled_delivery_pct": round(skilled_delivery, 2),
+                "facility_delivery_pct": round(facility_delivery, 2),
+                "fully_vaccinated_basic_pct": round(fully_vaccinated, 2),
+            },
+            "reason_flags": _get_health_need_reason_flags(row),
+        }
+
+        records.append(record)
+
+    return sorted(
+        records,
+        key=lambda item: item["health_need_score"],
+        reverse=True,
+    )
+
+
 def get_access_density():
     access_density = _build_access_density_df()
 
