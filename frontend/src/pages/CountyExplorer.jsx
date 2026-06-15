@@ -8,6 +8,7 @@ export default function CountyExplorer() {
   const [accessDensity, setAccessDensity] = useState([])
   const [counties, setCounties] = useState([])
   const [serviceGap, setServiceGap] = useState([])
+  const [priorityIndex, setPriorityIndex] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -17,16 +18,22 @@ export default function CountyExplorer() {
         setLoading(true)
         setError("")
 
-        const [accessResponse, countiesResponse, serviceGapResponse] =
-          await Promise.all([
-            axios.get(`${API_BASE}/access-density`),
-            axios.get(`${API_BASE}/counties`),
-            axios.get(`${API_BASE}/service-gap-score`),
-          ])
+        const [
+          accessResponse,
+          countiesResponse,
+          serviceGapResponse,
+          priorityIndexResponse,
+        ] = await Promise.all([
+          axios.get(`${API_BASE}/access-density`),
+          axios.get(`${API_BASE}/counties`),
+          axios.get(`${API_BASE}/service-gap-score`),
+          axios.get(`${API_BASE}/planning-priority-index`),
+        ])
 
         setAccessDensity(accessResponse.data || [])
         setCounties(countiesResponse.data || [])
         setServiceGap(serviceGapResponse.data || [])
+        setPriorityIndex(priorityIndexResponse.data || [])
       } catch (err) {
         console.error(err)
         setError("Unable to load county comparison data. Please try again.")
@@ -82,6 +89,7 @@ export default function CountyExplorer() {
             accessDensity={accessDensity}
             counties={counties}
             serviceGap={serviceGap}
+            priorityIndex={priorityIndex}
           />
         )}
       </div>
