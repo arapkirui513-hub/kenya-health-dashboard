@@ -19,10 +19,11 @@ from data_loader import (
     get_service_gap_score,
     get_population_data,
     get_access_density,
+    get_planning_priority_index,
 )
 
 
-API_VERSION = "v2.3.0"
+API_VERSION = "v3.0.0-dev"
 
 ALLOWED_ORIGINS = [
     "https://kenya-health-dashboard.vercel.app",
@@ -142,6 +143,10 @@ def population(request: Request):
 def access_density(request: Request):
     return get_access_density()
 
+@app.get("/planning-priority-index")
+@limiter.limit("60/minute")
+def planning_priority_index(request: Request):
+    return get_planning_priority_index()
 
 @app.get("/facilities/export")
 @limiter.limit("10/minute")
