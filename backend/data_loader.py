@@ -1402,3 +1402,149 @@ def get_facilities_export(
     export_df = export_df.apply(lambda column: column.map(_escape_csv_formula))
 
     return export_df
+
+def get_need_access_gap_index():
+    """
+    Calculate the V5 Need vs Access Gap Index.
+
+    Higher score means stronger concern where health need is higher and
+    access/service/planning signals suggest weaker readiness.
+    """
+    health_need = pd.DataFrame(get_health_need_index())
+    access_density = pd.DataFrame(get_access_density())
+    service_scores = pd.DataFrame(get_service_gap_score())
+    priority_scores = pd.DataFrame(get_planning_priority_index())
+
+    for frame in [health_need, access_density, service_scores, priority_scores]:
+        if not frame.empty and "county" in frame.columns:
+            frame["_county_key"] = frame["county"].apply(normalize_county_name)
+
+    access_metric = "facilities_per_100k_population"
+
+    if access_metric in access_density.columns:
+        access_density[access_metric] = pd.to_numeric(
+            access_density[access_metric],
+            errors="coerce",
+        )
+        min_access = access_density[access_metric].min()
+        max_access = access_density[access_metric].max()
+    else:
+        min_access = 0
+        max_access = 0
+
+    merged = health_need.merge(
+        access_density,
+        on="_county_key",
+        how="left",
+        suffixes=("", "_access"),
+    )
+
+    merged = merged.merge(
+        service_scores,
+        on="_county_key",
+        how="left",
+        suffixes=("", "_service"),
+    )
+
+    merged = merged.merge(
+        priority_scores,
+        on="_county_key",
+        how="left",
+        suffixes=("", "_priority"),
+    )
+
+    records = []
+
+    def safe_number(value, default=0):
+        number = pd.to_numeric(value, errors="coerce")
+        if pd.isna(number):
+            return default
+        return float(number)
+
+    def optional_number(value):
+        number = pd.to_numeric(value, errors="coerce")
+        if pd.isna(number):
+            return None
+        return float(round(float(number), 2))
+
+    def clamp_score(value):
+        return float(round(max(0, min(100, float(value))), 2))
+
+    def get_gap_level(score):
+        if score >= 70:
+            return "High Gap Concern"
+        if score >= 40:
+            return "Moderate Gap Concern"
+        return "Lower Gap Concern"
+
+    for _, row in merged.iterrows():
+        county = row.get("county")
+
+        health_need_score = safe_number(row.get("health_need_score"))
+        facility_density = safe_number(row.get(access_metric), default=None)
+
+        if facility_density is None or pd.isna(facility_density):
+            access_weakness_risk = 0
+        elif max_access == min_access:
+            access_weakness_risk = 0
+        else:
+            normalized_access = ((facility_density - min_access) / (max_access - min_access)) * 100
+            access_weakness_risk = 100 - normalized_access
+
+        coverage_score = safe_number(row.get("coverage_score"), default=None)
+        if coverage_score is None or pd.isna(coverage_score):
+            service_gap_risk = 0
+        else:
+            service_gap_risk = 100 - coverage_score
+
+        priority_score = safe_number(row.get("priority_score"))
+
+        health_need_risk = clamp_score(health_need_score)
+        access_weakness_risk = clamp_score(access_weakness_risk)
+        service_gap_risk = clamp_score(service_gap_risk)
+        planning_priority_risk = clamp_score(priority_score)
+
+        need_access_gap_score = (
+            health_need_risk * 0.40
+            + access_weakness_risk * 0.30
+            + service_gap_risk * 0.20
+            + planning_priority_risk * 0.10
+        )
+        need_access_gap_score = float(round(need_access_gap_score, 2))
+
+        reason_flags = []
+
+        if health_need_risk >= 35:
+            reason_flags.append("High health need")
+        if access_weakness_risk >= 60:
+            reason_flags.append("Low facility access per population")
+        if service_gap_risk >= 50:
+            reason_flags.append("Elevated service gap")
+        if planning_priority_risk >= 40:
+            reason_flags.append("High planning priority")
+
+        records.append({
+            "county": county,
+            "need_access_gap_score": need_access_gap_score,
+            "gap_level": get_gap_level(need_access_gap_score),
+            "component_scores": {
+                "health_need_risk": health_need_risk,
+                "access_weakness_risk": access_weakness_risk,
+                "service_gap_risk": service_gap_risk,
+                "planning_priority_risk": planning_priority_risk,
+            },
+            "input_metrics": {
+                "health_need_score": optional_number(row.get("health_need_score")),
+                "facilities_per_100k_population": optional_number(row.get(access_metric)),
+                "coverage_score": optional_number(row.get("coverage_score")),
+                "priority_score": optional_number(row.get("priority_score")),
+            },
+            "reason_flags": reason_flags,
+        })
+
+    return sorted(
+        records,
+        key=lambda item: item["need_access_gap_score"],
+        reverse=True,
+    )
+
