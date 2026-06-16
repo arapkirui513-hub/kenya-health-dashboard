@@ -22,6 +22,7 @@ from data_loader import (
     get_access_density,
     get_planning_priority_index,
     get_health_need_index,
+    get_need_access_gap_index,
 )
 
 
@@ -151,6 +152,13 @@ def kdhs_indicators(request: Request):
 def health_need_index(request: Request):
     return get_health_need_index()
 
+
+
+
+@app.get("/need-access-gap-index")
+@limiter.limit("60/minute")
+def need_access_gap_index(request: Request):
+    return get_need_access_gap_index()
 
 @app.get("/access-density")
 @limiter.limit("60/minute")
