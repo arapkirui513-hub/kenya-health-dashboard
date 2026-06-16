@@ -5,6 +5,7 @@ import CountyComparisonReportButton from "./CountyComparisonReportButton"
 const normalizeCounty = (name = "") =>
   name
     .toLowerCase()
+    .replace(/\bcity\b/g, "")
     .replace(/[’']/g, "")
     .replace(/[^a-z0-9]/g, "")
 
@@ -18,19 +19,19 @@ const toNumber = (value) => {
 
 const formatCount = (value) => {
   const number = toNumber(value)
-  return number === null ? "—" : number.toLocaleString()
+  return number === null ? "â€”" : number.toLocaleString()
 }
 
 const formatRate = (value) => {
   const number = toNumber(value)
-  return number === null ? "—" : `${number.toFixed(1)} per 100k`
+  return number === null ? "â€”" : `${number.toFixed(1)} per 100k`
 }
 
 const formatDecimal = (value) => {
   const number = toNumber(value)
 
   return number === null
-    ? "—"
+    ? "â€”"
     : number.toLocaleString(undefined, {
         maximumFractionDigits: 1,
       })
@@ -44,16 +45,31 @@ const formatPriorityScore = (value) => {
 
 const formatPriorityLevel = (value) => value || "N/A"
 
+const formatHealthNeedScore = (value) => {
+  const number = toNumber(value)
+  return number === null ? "N/A" : number.toFixed(2)
+}
+
+const formatHealthNeedLevel = (value) => value || "N/A"
+
+const formatReasonFlags = (value) => {
+  if (!Array.isArray(value) || value.length === 0) {
+    return "No major flags"
+  }
+
+  return value.slice(0, 2).join(", ")
+}
+
 const formatArea = (value) => {
   const number = toNumber(value)
-  return number === null ? "—" : `${number.toLocaleString()} km²`
+  return number === null ? "â€”" : `${number.toLocaleString()} kmÂ²`
 }
 
 const formatPercent = (value) => {
   const number = toNumber(value)
 
   if (number === null) {
-    return "—"
+    return "â€”"
   }
 
   const normalized = number <= 1 ? number * 100 : number
@@ -93,6 +109,18 @@ const getPriorityBadgeClass = (level) => {
   }
 
   if (level === "Medium") {
+    return "border-amber-200 bg-amber-50 text-amber-700"
+  }
+
+  return "border-emerald-200 bg-emerald-50 text-emerald-700"
+}
+
+const getHealthNeedBadgeClass = (level) => {
+  if (level === "High Health Need") {
+    return "border-rose-200 bg-rose-50 text-rose-700"
+  }
+
+  if (level === "Moderate Health Need") {
     return "border-amber-200 bg-amber-50 text-amber-700"
   }
 
@@ -214,6 +242,57 @@ function PriorityReasonCard({ title, priority }) {
   )
 }
 
+function HealthNeedReasonCard({ title, healthNeed }) {
+  const flags = Array.isArray(healthNeed?.reason_flags)
+    ? healthNeed.reason_flags
+    : []
+
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-bold text-slate-950 sm:text-lg">
+            {title}
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">KDHS health need</p>
+        </div>
+
+        <span
+          className={`rounded-full border px-3 py-1 text-xs font-semibold ${getHealthNeedBadgeClass(
+            healthNeed?.health_need_level
+          )}`}
+        >
+          {healthNeed?.health_need_level || "N/A"}
+        </span>
+      </div>
+
+      <p className="mt-4 text-3xl font-black text-slate-950">
+        {formatHealthNeedScore(healthNeed?.health_need_score)}
+      </p>
+      <p className="mt-1 text-sm text-slate-500">
+        Higher scores signal stronger KDHS-based health need.
+      </p>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {flags.length ? (
+          flags.slice(0, 4).map((flag) => (
+            <span
+              key={flag}
+              className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
+            >
+              {flag}
+            </span>
+          ))
+        ) : (
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            No major flags
+          </span>
+        )}
+      </div>
+    </article>
+  )
+}
+
 function SummaryCard({ title, density }) {
   return (
     <article className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -256,6 +335,7 @@ export default function CountyComparisonTool({
   counties,
   serviceGap,
   priorityIndex,
+  healthNeedIndex,
 }) {
   const [selectedA, setSelectedA] = useState("Nairobi")
   const [selectedB, setSelectedB] = useState("Turkana")
@@ -279,9 +359,87 @@ export default function CountyComparisonTool({
   const countyAPriority = findCounty(priorityIndex, selectedA)
   const countyBPriority = findCounty(priorityIndex, selectedB)
 
+  const countyAHealthNeed = findCounty(healthNeedIndex, selectedA)
+  const countyBHealthNeed = findCounty(healthNeedIndex, selectedB)
+
   const sameCounty = normalizeCounty(selectedA) === normalizeCounty(selectedB)
 
   const metricGroups = [
+    {
+      title: "KDHS Health Need",
+      rows: [
+        {
+          label: "Health need score",
+          a: countyAHealthNeed?.health_need_score,
+          b: countyBHealthNeed?.health_need_score,
+          formatter: formatHealthNeedScore,
+          highlight: true,
+        },
+        {
+          label: "Health need level",
+          a: countyAHealthNeed?.health_need_level,
+          b: countyBHealthNeed?.health_need_level,
+          formatter: formatHealthNeedLevel,
+          highlight: false,
+        },
+        {
+          label: "Key health-need flags",
+          a: countyAHealthNeed?.reason_flags,
+          b: countyBHealthNeed?.reason_flags,
+          formatter: formatReasonFlags,
+          highlight: false,
+        },
+        {
+          label: "Teenage pregnancy",
+          a: countyAHealthNeed?.input_metrics?.teenage_pregnancy_pct,
+          b: countyBHealthNeed?.input_metrics?.teenage_pregnancy_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "Modern contraceptive use",
+          a: countyAHealthNeed?.input_metrics?.modern_contraceptive_use_pct,
+          b: countyBHealthNeed?.input_metrics?.modern_contraceptive_use_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "Unmet need for family planning",
+          a: countyAHealthNeed?.input_metrics?.unmet_need_family_planning_pct,
+          b: countyBHealthNeed?.input_metrics?.unmet_need_family_planning_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "ANC 4+ visits",
+          a: countyAHealthNeed?.input_metrics?.anc_4plus_visits_pct,
+          b: countyBHealthNeed?.input_metrics?.anc_4plus_visits_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "Skilled delivery",
+          a: countyAHealthNeed?.input_metrics?.skilled_delivery_pct,
+          b: countyBHealthNeed?.input_metrics?.skilled_delivery_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "Facility delivery",
+          a: countyAHealthNeed?.input_metrics?.facility_delivery_pct,
+          b: countyBHealthNeed?.input_metrics?.facility_delivery_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+        {
+          label: "Fully vaccinated basic",
+          a: countyAHealthNeed?.input_metrics?.fully_vaccinated_basic_pct,
+          b: countyBHealthNeed?.input_metrics?.fully_vaccinated_basic_pct,
+          formatter: formatPercent,
+          highlight: true,
+        },
+      ],
+    },
     {
       title: "Planning Priority",
       rows: [
@@ -347,7 +505,7 @@ export default function CountyComparisonTool({
           highlight: true,
         },
         {
-          label: "Population density per km²",
+          label: "Population density per kmÂ²",
           a: countyADensity?.density_per_km2,
           b: countyBDensity?.density_per_km2,
           formatter: formatDecimal,
@@ -555,6 +713,17 @@ export default function CountyComparisonTool({
           <section className="grid gap-4 sm:grid-cols-2">
             <PriorityReasonCard title={selectedA} priority={countyAPriority} />
             <PriorityReasonCard title={selectedB} priority={countyBPriority} />
+          </section>
+
+          <section className="grid gap-4 sm:grid-cols-2">
+            <HealthNeedReasonCard
+              title={selectedA}
+              healthNeed={countyAHealthNeed}
+            />
+            <HealthNeedReasonCard
+              title={selectedB}
+              healthNeed={countyBHealthNeed}
+            />
           </section>
 
           <CountyInsightBrief

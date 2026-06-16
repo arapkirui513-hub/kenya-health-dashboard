@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import CountyComparisonTool from "../components/CountyComparisonTool"
@@ -9,6 +9,7 @@ export default function CountyExplorer() {
   const [counties, setCounties] = useState([])
   const [serviceGap, setServiceGap] = useState([])
   const [priorityIndex, setPriorityIndex] = useState([])
+  const [healthNeedIndex, setHealthNeedIndex] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -23,17 +24,20 @@ export default function CountyExplorer() {
           countiesResponse,
           serviceGapResponse,
           priorityIndexResponse,
+          healthNeedResponse,
         ] = await Promise.all([
           axios.get(`${API_BASE}/access-density`),
           axios.get(`${API_BASE}/counties`),
           axios.get(`${API_BASE}/service-gap-score`),
           axios.get(`${API_BASE}/planning-priority-index`),
+          axios.get(`${API_BASE}/health-need-index`),
         ])
 
         setAccessDensity(accessResponse.data || [])
         setCounties(countiesResponse.data || [])
         setServiceGap(serviceGapResponse.data || [])
         setPriorityIndex(priorityIndexResponse.data || [])
+        setHealthNeedIndex(healthNeedResponse.data || [])
       } catch (err) {
         console.error(err)
         setError("Unable to load county comparison data. Please try again.")
@@ -60,8 +64,8 @@ export default function CountyExplorer() {
               </h1>
 
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
-                Compare counties using access, ownership, geography, and service
-                coverage.
+                Compare counties using access, ownership, geography, service
+                coverage, planning priority, and KDHS health-need indicators.
               </p>
             </div>
 
@@ -69,7 +73,7 @@ export default function CountyExplorer() {
               to="/"
               className="flex min-h-11 w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 sm:w-auto"
             >
-              ← Back to Dashboard
+              Back to Dashboard
             </Link>
           </div>
         </section>
@@ -90,6 +94,7 @@ export default function CountyExplorer() {
             counties={counties}
             serviceGap={serviceGap}
             priorityIndex={priorityIndex}
+            healthNeedIndex={healthNeedIndex}
           />
         )}
       </div>
