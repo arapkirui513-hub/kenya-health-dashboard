@@ -6,6 +6,7 @@ import PriorityIndexSection from "../components/PriorityIndexSection"
 import { API_BASE } from "../config/api"
 import MarketDynamicsSection from "../components/MarketDynamicsSection"
 import HealthNeedIndexSection from "../components/HealthNeedIndexSection"
+import NeedAccessGapSection from "../components/NeedAccessGapSection"
 import {
   PieChart,
   Pie,
@@ -532,6 +533,8 @@ function Dashboard() {
 
             <AccessDensitySection apiBase={API_BASE} />
 
+            <NeedAccessGapSection />
+            
             <PriorityIndexSection apiBase={API_BASE} />
 
             <HealthNeedIndexSection apiBase={API_BASE} />
