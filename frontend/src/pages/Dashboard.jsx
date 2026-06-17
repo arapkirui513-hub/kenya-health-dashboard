@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import AccessDensitySection from "../components/AccessDensitySection"
@@ -81,7 +81,7 @@ function Dashboard() {
         }
       )
       .catch(() => {
-        setError("Could not load dashboard data. Make sure the backend is running.")
+        setError("Could not load dashboard data. The backend may still be waking up. Please refresh or try again in a moment.")
         setLoading(false)
       })
   }, [])
@@ -196,7 +196,7 @@ function Dashboard() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {loading && (
           <div className="rounded-2xl border bg-white p-5 shadow-sm">
-            <p className="text-slate-600">Loading dashboard data...</p>
+            <p className="text-slate-600">Loading dashboard data. This may take a moment if the backend is waking up.</p>
           </div>
         )}
 
@@ -303,7 +303,7 @@ function Dashboard() {
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
                   Public and private facilities make up the largest share of
-                  Kenya’s health facility network.
+                  Kenyaâ€™s health facility network.
                 </p>
 
                 <div className="mt-5 space-y-3">
@@ -613,7 +613,7 @@ function Dashboard() {
 
               <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <p className="text-sm leading-6 text-slate-500">
-                  Showing {startResult.toLocaleString()}–
+                  Showing {startResult.toLocaleString()}â€“
                   {endResult.toLocaleString()} of{" "}
                   {facilityTotal.toLocaleString()} matching facilities.
                 </p>
@@ -623,7 +623,7 @@ function Dashboard() {
                     onClick={handleExport}
                     className="min-h-11 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
                   >
-                    ↓ Export CSV
+                    â†“ Export CSV
                   </button>
 
                   <button

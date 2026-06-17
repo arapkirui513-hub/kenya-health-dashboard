@@ -246,7 +246,7 @@ function PriorityIndexSection({ apiBase }) {
       })
       .catch(() => {
         if (!isMounted) return
-        setError("Could not load the County Planning Priority Index.")
+        setError("Could not load the County Planning Priority Index. The backend may still be waking up. Please refresh or try again in a moment.")
         setLoading(false)
       })
 
@@ -336,7 +336,7 @@ function PriorityIndexSection({ apiBase }) {
     return (
       <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
         <p className="text-sm font-semibold text-slate-700">
-          Loading County Planning Priority Index...
+          Loading County Planning Priority Index. This may take a moment if the backend is waking up.
         </p>
       </section>
     )
@@ -453,7 +453,7 @@ function PriorityIndexSection({ apiBase }) {
 
           {filteredPriorityIndex.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-dashed bg-white p-6 text-sm font-medium text-slate-500">
-              No counties match this priority filter.
+              No counties match this priority filter. Try All counties or another priority level.
             </div>
           ) : (
             <>
@@ -677,4 +677,5 @@ function PriorityIndexSection({ apiBase }) {
 }
 
 export default PriorityIndexSection
+
 

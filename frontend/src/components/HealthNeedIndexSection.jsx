@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 
 const formatScore = (value) => Number(value || 0).toFixed(2)
@@ -33,7 +33,7 @@ function HealthNeedIndexSection({ apiBase }) {
         setLoading(false)
       })
       .catch(() => {
-        setError("Could not load the Health Need Index.")
+        setError("Could not load the Health Need Index. The backend may still be waking up. Please refresh or try again in a moment.")
         setLoading(false)
       })
   }, [apiBase])
@@ -75,7 +75,7 @@ function HealthNeedIndexSection({ apiBase }) {
     return (
       <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
         <p className="text-sm font-medium text-slate-500">
-          Loading Health Need Index...
+          Loading Health Need Index. This may take a moment if the backend is waking up.
         </p>
       </section>
     )
