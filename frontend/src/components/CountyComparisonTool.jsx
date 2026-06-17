@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react"
+﻿import { Fragment, useMemo, useState } from "react"
 import CountyInsightBrief from "./CountyInsightBrief"
 import CountyComparisonReportButton from "./CountyComparisonReportButton"
 
@@ -6,7 +6,7 @@ const normalizeCounty = (name = "") =>
   name
     .toLowerCase()
     .replace(/\bcity\b/g, "")
-    .replace(/[’']/g, "")
+    .replace(/[â€™']/g, "")
     .replace(/[^a-z0-9]/g, "")
 
 const findCounty = (rows, countyName) =>
@@ -19,19 +19,19 @@ const toNumber = (value) => {
 
 const formatCount = (value) => {
   const number = toNumber(value)
-  return number === null ? "â€”" : number.toLocaleString()
+  return number === null ? "Ã¢â‚¬â€" : number.toLocaleString()
 }
 
 const formatRate = (value) => {
   const number = toNumber(value)
-  return number === null ? "â€”" : `${number.toFixed(1)} per 100k`
+  return number === null ? "Ã¢â‚¬â€" : `${number.toFixed(1)} per 100k`
 }
 
 const formatDecimal = (value) => {
   const number = toNumber(value)
 
   return number === null
-    ? "â€”"
+    ? "Ã¢â‚¬â€"
     : number.toLocaleString(undefined, {
         maximumFractionDigits: 1,
       })
@@ -62,14 +62,14 @@ const formatReasonFlags = (value) => {
 
 const formatArea = (value) => {
   const number = toNumber(value)
-  return number === null ? "â€”" : `${number.toLocaleString()} kmÂ²`
+  return number === null ? "Ã¢â‚¬â€" : `${number.toLocaleString()} kmÃ‚Â²`
 }
 
 const formatPercent = (value) => {
   const number = toNumber(value)
 
   if (number === null) {
-    return "â€”"
+    return "Ã¢â‚¬â€"
   }
 
   const normalized = number <= 1 ? number * 100 : number
@@ -505,7 +505,7 @@ export default function CountyComparisonTool({
           highlight: true,
         },
         {
-          label: "Population density per kmÂ²",
+          label: "Population density per kmÃ‚Â²",
           a: countyADensity?.density_per_km2,
           b: countyBDensity?.density_per_km2,
           formatter: formatDecimal,
@@ -691,6 +691,9 @@ export default function CountyComparisonTool({
                 countyBCounties={countyBCounties}
                 countyAGap={countyAGap}
                 countyBGap={countyBGap}
+                              countyAPriority={countyAPriority}
+                countyBPriority={countyBPriority}
+                priorityIndex={priorityIndex}
               />
             </div>
           </div>
@@ -733,7 +736,10 @@ export default function CountyComparisonTool({
             countyBDensity={countyBDensity}
             countyAGap={countyAGap}
             countyBGap={countyBGap}
-          />
+                          countyAPriority={countyAPriority}
+                countyBPriority={countyBPriority}
+                priorityIndex={priorityIndex}
+              />
 
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-4 sm:p-5">
