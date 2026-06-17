@@ -27,7 +27,7 @@ function HealthNeedIndexSection({ apiBase }) {
 
   useEffect(() => {
     axios
-      .get(`${apiBase}/health-need-index`)
+      .get(`${apiBase}/county-health-needs`)
       .then((response) => {
         setHealthNeedIndex(response.data || [])
         setLoading(false)
