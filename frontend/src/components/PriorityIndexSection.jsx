@@ -1,20 +1,19 @@
 ﻿import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 
+const PRIORITY_LEVEL_FILTERS = [
+  { label: "All counties", value: "All" },
+  { label: "High priority", value: "High" },
+  { label: "Medium priority", value: "Medium" },
+  { label: "Low priority", value: "Low" },
+]
+
 function formatScore(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
     return "N/A"
   }
 
   return Number(value).toFixed(1)
-}
-
-function formatNumber(value) {
-  if (value === null || value === undefined || Number.isNaN(Number(value))) {
-    return "N/A"
-  }
-
-  return Number(value).toLocaleString()
 }
 
 function getPriorityBadgeClass(level) {
@@ -27,6 +26,28 @@ function getPriorityBadgeClass(level) {
   }
 
   return "border-emerald-200 bg-emerald-50 text-emerald-700"
+}
+
+function getFilterButtonClass(isSelected) {
+  return isSelected
+    ? "border-slate-950 bg-slate-950 text-white"
+    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+}
+
+function normalizeCounty(name = "") {
+  return String(name)
+    .toLowerCase()
+    .replace(/\bcity\b/g, "")
+    .replace(/[’']/g, "")
+    .replace(/[^a-z0-9]/g, "")
+}
+
+function getNationalRank(priorityIndex, countyName) {
+  const rankIndex = priorityIndex.findIndex(
+    (county) => normalizeCounty(county.county) === normalizeCounty(countyName)
+  )
+
+  return rankIndex >= 0 ? rankIndex + 1 : "N/A"
 }
 
 function escapeCsvValue(value) {
@@ -94,6 +115,7 @@ function ScoreBar({ value }) {
 
 function PriorityIndexSection({ apiBase }) {
   const [priorityIndex, setPriorityIndex] = useState([])
+  const [selectedPriorityLevel, setSelectedPriorityLevel] = useState("All")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -137,13 +159,26 @@ function PriorityIndexSection({ apiBase }) {
       medium,
       low,
       highestPriorityCounty: priorityIndex[0],
-      topPriorityCounties: priorityIndex.slice(0, 10),
     }
   }, [priorityIndex])
 
+  const filteredPriorityIndex = useMemo(() => {
+    if (selectedPriorityLevel === "All") {
+      return priorityIndex
+    }
+
+    return priorityIndex.filter(
+      (county) => county.priority_level === selectedPriorityLevel
+    )
+  }, [priorityIndex, selectedPriorityLevel])
+
+  const activeFilter = PRIORITY_LEVEL_FILTERS.find(
+    (filter) => filter.value === selectedPriorityLevel
+  )
+
   const handleExportCsv = () => {
     const header = [
-      "Rank",
+      "National Rank",
       "County",
       "Priority Score",
       "Priority Level",
@@ -154,14 +189,14 @@ function PriorityIndexSection({ apiBase }) {
       "Risk Drivers",
     ]
 
-    const rows = priorityIndex.map((county, index) => {
+    const rows = filteredPriorityIndex.map((county) => {
       const flags =
         Array.isArray(county.reason_flags) && county.reason_flags.length > 0
           ? county.reason_flags.join("; ")
           : "No major flags"
 
       return [
-        index + 1,
+        getNationalRank(priorityIndex, county.county),
         county.county || "",
         formatScore(county.priority_score),
         county.priority_level || "",
@@ -174,8 +209,12 @@ function PriorityIndexSection({ apiBase }) {
     })
 
     const dateStamp = new Date().toISOString().slice(0, 10)
+    const filterSlug =
+      selectedPriorityLevel === "All"
+        ? "all-counties"
+        : `${selectedPriorityLevel.toLowerCase()}-priority`
 
-    downloadCsv(`kenya-planning-priority-index-${dateStamp}.csv`, [
+    downloadCsv(`kenya-planning-priority-index-${filterSlug}-${dateStamp}.csv`, [
       header,
       ...rows,
     ])
@@ -232,7 +271,7 @@ function PriorityIndexSection({ apiBase }) {
           <button
             type="button"
             onClick={handleExportCsv}
-            disabled={priorityIndex.length === 0}
+            disabled={filteredPriorityIndex.length === 0}
             className="min-h-11 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
             Export CSV
@@ -264,152 +303,215 @@ function PriorityIndexSection({ apiBase }) {
       </div>
 
       <div className="mt-6 rounded-2xl border bg-slate-50 p-4">
-        <h3 className="text-lg font-bold text-slate-950">
-          Top 10 planning priority counties
-        </h3>
-        <p className="mt-1 text-sm leading-6 text-slate-500">
-          Sorted from highest to lowest priority score.
-        </p>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-slate-950">
+              {activeFilter?.label || "All counties"}
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-slate-500">
+              Showing {filteredPriorityIndex.length} of {priorityIndex.length}{" "}
+              counties in the Planning Priority Index.
+            </p>
+          </div>
 
-        <div className="mt-5 hidden overflow-x-auto md:block">
-          <table className="min-w-full text-left text-sm">
-            <thead>
-              <tr className="border-b text-xs uppercase tracking-wide text-slate-500">
-                <th className="px-3 py-3">County</th>
-                <th className="px-3 py-3">Score</th>
-                <th className="px-3 py-3">Level</th>
-                <th className="px-3 py-3">Access</th>
-                <th className="px-3 py-3">Service</th>
-                <th className="px-3 py-3">Ownership</th>
-                <th className="px-3 py-3">Population</th>
-                <th className="px-3 py-3">Main signals</th>
-              </tr>
-            </thead>
-            <tbody>
-              {summary.topPriorityCounties.map((county) => {
+          <div className="flex flex-wrap gap-2">
+            {PRIORITY_LEVEL_FILTERS.map((filter) => (
+              <button
+                key={filter.value}
+                type="button"
+                onClick={() => setSelectedPriorityLevel(filter.value)}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${getFilterButtonClass(
+                  selectedPriorityLevel === filter.value
+                )}`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filteredPriorityIndex.length === 0 ? (
+          <div className="mt-5 rounded-2xl border border-dashed bg-white p-6 text-sm font-medium text-slate-500">
+            No counties match this priority filter.
+          </div>
+        ) : (
+          <>
+            <div className="mt-5 hidden overflow-x-auto md:block">
+              <table className="min-w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b text-xs uppercase tracking-wide text-slate-500">
+                    <th className="px-3 py-3">Rank</th>
+                    <th className="px-3 py-3">County</th>
+                    <th className="px-3 py-3">Score</th>
+                    <th className="px-3 py-3">Level</th>
+                    <th className="px-3 py-3">Access</th>
+                    <th className="px-3 py-3">Service</th>
+                    <th className="px-3 py-3">Ownership</th>
+                    <th className="px-3 py-3">Population</th>
+                    <th className="px-3 py-3">Main signals</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPriorityIndex.map((county) => {
+                    const flags = Array.isArray(county.reason_flags)
+                      ? county.reason_flags.slice(0, 3)
+                      : []
+
+                    return (
+                      <tr key={county.county} className="border-b last:border-0">
+                        <td className="px-3 py-4 font-semibold text-slate-500">
+                          {getNationalRank(priorityIndex, county.county)}
+                        </td>
+                        <td className="px-3 py-4 font-semibold text-slate-900">
+                          {county.county}
+                        </td>
+                        <td className="px-3 py-4">
+                          <span className="font-bold text-slate-950">
+                            {formatScore(county.priority_score)}
+                          </span>
+                          <ScoreBar value={county.priority_score} />
+                        </td>
+                        <td className="px-3 py-4">
+                          <span
+                            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getPriorityBadgeClass(
+                              county.priority_level
+                            )}`}
+                          >
+                            {county.priority_level}
+                          </span>
+                        </td>
+                        <td className="px-3 py-4">
+                          {formatScore(county.component_scores?.access_risk)}
+                        </td>
+                        <td className="px-3 py-4">
+                          {formatScore(county.component_scores?.service_risk)}
+                        </td>
+                        <td className="px-3 py-4">
+                          {formatScore(county.component_scores?.ownership_risk)}
+                        </td>
+                        <td className="px-3 py-4">
+                          {formatScore(
+                            county.component_scores?.population_pressure
+                          )}
+                        </td>
+                        <td className="px-3 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {flags.length > 0 ? (
+                              flags.map((flag) => (
+                                <span
+                                  key={flag}
+                                  className="rounded-full bg-white px-2 py-1 text-xs text-slate-600"
+                                >
+                                  {flag}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-slate-400">
+                                No major flags
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-5 space-y-3 md:hidden">
+              {filteredPriorityIndex.map((county) => {
                 const flags = Array.isArray(county.reason_flags)
                   ? county.reason_flags.slice(0, 3)
                   : []
 
                 return (
-                  <tr key={county.county} className="border-b last:border-0">
-                    <td className="px-3 py-4 font-semibold text-slate-900">
-                      {county.county}
-                    </td>
-                    <td className="px-3 py-4">
-                      <span className="font-bold text-slate-950">
-                        {formatScore(county.priority_score)}
-                      </span>
-                      <ScoreBar value={county.priority_score} />
-                    </td>
-                    <td className="px-3 py-4">
+                  <div
+                    key={county.county}
+                    className="rounded-2xl border bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                          Rank {getNationalRank(priorityIndex, county.county)}
+                        </p>
+                        <p className="font-bold text-slate-950">
+                          {county.county}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          Priority score: {formatScore(county.priority_score)}
+                        </p>
+                      </div>
                       <span
-                        className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getPriorityBadgeClass(
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold ${getPriorityBadgeClass(
                           county.priority_level
                         )}`}
                       >
                         {county.priority_level}
                       </span>
-                    </td>
-                    <td className="px-3 py-4">
-                      {formatScore(county.component_scores?.access_risk)}
-                    </td>
-                    <td className="px-3 py-4">
-                      {formatScore(county.component_scores?.service_risk)}
-                    </td>
-                    <td className="px-3 py-4">
-                      {formatScore(county.component_scores?.ownership_risk)}
-                    </td>
-                    <td className="px-3 py-4">
-                      {formatScore(county.component_scores?.population_pressure)}
-                    </td>
-                    <td className="px-3 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {flags.length > 0 ? (
-                          flags.map((flag) => (
-                            <span
-                              key={flag}
-                              className="rounded-full bg-white px-2 py-1 text-xs text-slate-600"
-                            >
-                              {flag}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-xs text-slate-400">
-                            No major flags
-                          </span>
-                        )}
+                    </div>
+
+                    <ScoreBar value={county.priority_score} />
+
+                    <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-xs font-semibold uppercase text-slate-500">
+                          Access
+                        </p>
+                        <p className="font-bold text-slate-900">
+                          {formatScore(county.component_scores?.access_risk)}
+                        </p>
                       </div>
-                    </td>
-                  </tr>
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-xs font-semibold uppercase text-slate-500">
+                          Service
+                        </p>
+                        <p className="font-bold text-slate-900">
+                          {formatScore(county.component_scores?.service_risk)}
+                        </p>
+                      </div>
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-xs font-semibold uppercase text-slate-500">
+                          Ownership
+                        </p>
+                        <p className="font-bold text-slate-900">
+                          {formatScore(county.component_scores?.ownership_risk)}
+                        </p>
+                      </div>
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <p className="text-xs font-semibold uppercase text-slate-500">
+                          Population
+                        </p>
+                        <p className="font-bold text-slate-900">
+                          {formatScore(
+                            county.component_scores?.population_pressure
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {flags.length > 0 ? (
+                        flags.map((flag) => (
+                          <span
+                            key={flag}
+                            className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600"
+                          >
+                            {flag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-slate-400">
+                          No major flags
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 )
               })}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="mt-5 space-y-3 md:hidden">
-          {summary.topPriorityCounties.map((county) => {
-            const flags = Array.isArray(county.reason_flags)
-              ? county.reason_flags.slice(0, 3)
-              : []
-
-            return (
-              <div
-                key={county.county}
-                className="rounded-2xl border bg-white p-4 shadow-sm"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-bold text-slate-950">{county.county}</p>
-                    <p className="text-sm text-slate-500">
-                      Priority score: {formatScore(county.priority_score)}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full border px-3 py-1 text-xs font-semibold ${getPriorityBadgeClass(
-                      county.priority_level
-                    )}`}
-                  >
-                    {county.priority_level}
-                  </span>
-                </div>
-
-                <ScoreBar value={county.priority_score} />
-
-                <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-                  <div className="rounded-xl bg-slate-50 p-3">
-                    <p className="text-xs font-semibold uppercase text-slate-500">
-                      Access
-                    </p>
-                    <p className="font-bold text-slate-900">
-                      {formatScore(county.component_scores?.access_risk)}
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-slate-50 p-3">
-                    <p className="text-xs font-semibold uppercase text-slate-500">
-                      Service
-                    </p>
-                    <p className="font-bold text-slate-900">
-                      {formatScore(county.component_scores?.service_risk)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {flags.map((flag) => (
-                    <span
-                      key={flag}
-                      className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600"
-                    >
-                      {flag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="mt-6 grid gap-3 lg:grid-cols-4">
