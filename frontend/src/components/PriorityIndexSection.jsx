@@ -29,6 +29,44 @@ function getPriorityBadgeClass(level) {
   return "border-emerald-200 bg-emerald-50 text-emerald-700"
 }
 
+function escapeCsvValue(value) {
+  if (value === null || value === undefined) {
+    return ""
+  }
+
+  const stringValue = String(value)
+
+  if (
+    stringValue.includes(",") ||
+    stringValue.includes('"') ||
+    stringValue.includes("\n")
+  ) {
+    return `"${stringValue.replace(/"/g, '""')}"`
+  }
+
+  return stringValue
+}
+
+function downloadCsv(filename, rows) {
+  const csvContent = rows
+    .map((row) => row.map(escapeCsvValue).join(","))
+    .join("\n")
+
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;",
+  })
+
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+
+  link.href = url
+  link.setAttribute("download", filename)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 function PrioritySummaryCard({ title, value, description }) {
   return (
     <div className="rounded-2xl border bg-white p-4 shadow-sm">
@@ -103,6 +141,46 @@ function PriorityIndexSection({ apiBase }) {
     }
   }, [priorityIndex])
 
+  const handleExportCsv = () => {
+    const header = [
+      "Rank",
+      "County",
+      "Priority Score",
+      "Priority Level",
+      "Access Risk",
+      "Service Risk",
+      "Ownership Risk",
+      "Population Pressure",
+      "Risk Drivers",
+    ]
+
+    const rows = priorityIndex.map((county, index) => {
+      const flags =
+        Array.isArray(county.reason_flags) && county.reason_flags.length > 0
+          ? county.reason_flags.join("; ")
+          : "No major flags"
+
+      return [
+        index + 1,
+        county.county || "",
+        formatScore(county.priority_score),
+        county.priority_level || "",
+        formatScore(county.component_scores?.access_risk),
+        formatScore(county.component_scores?.service_risk),
+        formatScore(county.component_scores?.ownership_risk),
+        formatScore(county.component_scores?.population_pressure),
+        flags,
+      ]
+    })
+
+    const dateStamp = new Date().toISOString().slice(0, 10)
+
+    downloadCsv(`kenya-planning-priority-index-${dateStamp}.csv`, [
+      header,
+      ...rows,
+    ])
+  }
+
   if (loading) {
     return (
       <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
@@ -138,16 +216,27 @@ function PriorityIndexSection({ apiBase }) {
           </p>
         </div>
 
-        <div className="rounded-2xl border bg-slate-50 px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Highest priority county
-          </p>
-          <p className="mt-1 text-lg font-bold text-slate-950">
-            {summary.highestPriorityCounty?.county || "N/A"}
-          </p>
-          <p className="text-sm text-slate-500">
-            Score: {formatScore(summary.highestPriorityCounty?.priority_score)}
-          </p>
+        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+          <div className="rounded-2xl border bg-slate-50 px-4 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Highest priority county
+            </p>
+            <p className="mt-1 text-lg font-bold text-slate-950">
+              {summary.highestPriorityCounty?.county || "N/A"}
+            </p>
+            <p className="text-sm text-slate-500">
+              Score: {formatScore(summary.highestPriorityCounty?.priority_score)}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            disabled={priorityIndex.length === 0}
+            className="min-h-11 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300"
+          >
+            Export CSV
+          </button>
         </div>
       </div>
 
