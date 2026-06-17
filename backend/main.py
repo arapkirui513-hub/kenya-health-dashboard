@@ -1,4 +1,4 @@
-import io
+﻿import io
 
 from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -147,6 +147,7 @@ def kdhs_indicators(request: Request):
     return get_kdhs_indicators()
 
 
+@app.get("/county-health-needs")
 @app.get("/health-need-index")
 @limiter.limit("60/minute")
 def health_need_index(request: Request):
