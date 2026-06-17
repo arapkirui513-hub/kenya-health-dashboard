@@ -26,7 +26,7 @@ from data_loader import (
 )
 
 
-API_VERSION = "v4.0.1"
+API_VERSION = "v4.0.2"
 
 ALLOWED_ORIGINS = [
     "https://kenya-health-dashboard.vercel.app",
@@ -229,4 +229,5 @@ def facilities(
         page=page,
         page_size=page_size,
     )
+
 

@@ -1,4 +1,4 @@
-# Kenya Health Facilities Dashboard
+﻿# Kenya Health Facilities Dashboard
 
 A full-stack healthcare analytics dashboard that explores health facility distribution, ownership patterns, service availability, population-adjusted access, county comparison, planning priority, KDHS 2022 indicators, and health need-adjusted planning insights across Kenya.
 
@@ -53,15 +53,15 @@ The dashboard helps answer questions such as:
 
 ---
 
-# V4.0.1 Completion Report – Planning Report Polish
+# V4.0.2 Completion Report â€“ Planning Report Polish
 
 ## Release Summary
 
-Version 4.0.1 is a frontend usability and reporting polish release for the Kenya Health Facilities Dashboard.
+Version 4.0.2 is a frontend usability and reporting polish release for the Kenya Health Facilities Dashboard.
 
 This release strengthens the planning workflow around the County Planning Priority Index. It improves printable reports, CSV export, priority filtering, methodology explanation, and user-facing resilience during backend cold starts or API delays.
 
-V4.0.1 does not introduce a new backend index. It improves how existing V3 and V4 planning intelligence is presented, exported, explained, and used.
+V4.0.2 does not introduce a new backend index. It improves how existing V3 and V4 planning intelligence is presented, exported, explained, and used.
 
 ---
 
@@ -78,7 +78,7 @@ Frontend polish, reporting workflow improvement, and user-experience hardening.
 Recommended release tag:
 
 ```text
-v4.0.1
+V4.0.2
 ```
 
 ---
@@ -87,7 +87,7 @@ v4.0.1
 
 Before this release, the dashboard already ranked counties by planning priority, but the planner-facing workflow needed stronger reporting, explanation, and export support.
 
-V4.0.1 improves the experience around this question:
+V4.0.2 improves the experience around this question:
 
 ```text
 How can planners review, explain, export, and share county planning priority insights?
@@ -97,7 +97,7 @@ How can planners review, explain, export, and share county planning priority ins
 
 ## Completed Work
 
-## Task 1 – Planning-grade County Comparison Print Report
+## Task 1 â€“ Planning-grade County Comparison Print Report
 
 The County Explorer print report was upgraded from a basic comparison printout into a planning-grade county report.
 
@@ -137,7 +137,7 @@ Rank: 32 of 47
 
 ---
 
-## Task 2 – Planning Priority Index CSV Export
+## Task 2 â€“ Planning Priority Index CSV Export
 
 A CSV export button was added to the County Planning Priority Index section.
 
@@ -174,7 +174,7 @@ kenya-planning-priority-index-low-priority-2026-06-17.csv
 
 ---
 
-## Task 3 – Priority-Level Filter
+## Task 3 â€“ Priority-Level Filter
 
 Priority-level filters were added to the Planning Priority Index section.
 
@@ -218,7 +218,7 @@ Low priority: 8
 
 ---
 
-## Task 4 – Planning Priority Methodology Modal
+## Task 4 â€“ Planning Priority Methodology Modal
 
 A methodology modal was added to explain how the County Planning Priority Index works.
 
@@ -254,7 +254,7 @@ Limitations documented:
 
 ---
 
-## Task 5 – Loading, Error, and Empty-State Polish
+## Task 5 â€“ Loading, Error, and Empty-State Polish
 
 User-facing resilience was improved across the dashboard.
 
@@ -289,7 +289,7 @@ The backend is hosted on Render and may experience cold starts.
 
 ---
 
-## Files Changed Across V4.0.1
+## Files Changed Across V4.0.2
 
 Main files updated:
 
@@ -313,7 +313,7 @@ docs/V4_0_1_COMPLETION_REPORT.md
 
 ## User-Facing Improvements
 
-## Before V4.0.1
+## Before V4.0.2
 
 The dashboard could rank counties, but users had limited ways to package, explain, or export planning insights.
 
@@ -325,7 +325,7 @@ Main limitations:
 * Methodology explanation was not visible inside the app
 * Loading and error states were generic
 
-## After V4.0.1
+## After V4.0.2
 
 The dashboard now supports a stronger planning workflow:
 
@@ -410,13 +410,13 @@ Users can remove them in Chrome using:
 More settings > Headers and footers > Off
 ```
 
-A dedicated PDF-generation feature can be considered later, but it was intentionally not included in V4.0.1 to keep this release focused.
+A dedicated PDF-generation feature can be considered later, but it was intentionally not included in V4.0.2 to keep this release focused.
 
 ---
 
 ## Release Outcome
 
-V4.0.1 improves the dashboard from a feature-rich analytics application into a stronger planning-support product.
+V4.0.2 improves the dashboard from a feature-rich analytics application into a stronger planning-support product.
 
 The most important improvement is not a new metric. It is that existing planning intelligence can now be:
 
@@ -434,14 +434,14 @@ This makes the project stronger for portfolio review, stakeholder demos, and pla
 
 ## Recommended Next Work
 
-After V4.0.1, the next recommended work is presentation and documentation polish:
+After V4.0.2, the next recommended work is presentation and documentation polish:
 
 ```text
-1. Add updated V4.0.1 screenshots
+1. Add updated V4.0.2 screenshots
 2. Update README screenshot section
 3. Create ROADMAP.md
 4. Add Planning Priority Index methodology as a standalone markdown file
-5. Create final release tag v4.0.1
+5. Create final release tag V4.0.2
 ```
 
 
@@ -1074,46 +1074,46 @@ KDHS health need
 
 ```text
 kenya-health-dashboard/
-│
-├── backend/
-│   ├── main.py
-│   ├── data_loader.py
-│   ├── utils.py
-│   ├── requirements.txt
-│   ├── runtime.txt
-│   └── data/
-│       ├── county_population.csv
-│       └── kdhs_2022_county_indicators.csv
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── HealthNeedIndexSection.jsx
-│   │   │   ├── CountyComparisonTool.jsx
-│   │   │   └── MarketDynamicsSection.jsx
-│   │   ├── pages/
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── CountyExplorer.jsx
-│   │   ├── config/
-│   │   │   └── api.js
-│   │   └── main.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
-├── docs/
-│   ├── screenshots/
-│   ├── V1_COMPLETION_REPORT.md
-│   ├── V2_COMPLETION_REPORT.md
-│   ├── V3_COMPLETION_REPORT.md
-│   ├── V4_KDHS_INDICATOR_DICTIONARY.md
-│   ├── V4_HEALTH_NEED_INDEX_FORMULA.md
-│   └── V4_COMPLETION_REPORT.md
-│
-├── .github/
-│   └── workflows/
-│       └── keep-backend-awake.yml
-│
-└── README.md
+â”‚
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ main.py
+â”‚   â”œâ”€â”€ data_loader.py
+â”‚   â”œâ”€â”€ utils.py
+â”‚   â”œâ”€â”€ requirements.txt
+â”‚   â”œâ”€â”€ runtime.txt
+â”‚   â””â”€â”€ data/
+â”‚       â”œâ”€â”€ county_population.csv
+â”‚       â””â”€â”€ kdhs_2022_county_indicators.csv
+â”‚
+â”œâ”€â”€ frontend/
+â”‚   â”œâ”€â”€ src/
+â”‚   â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”‚   â”œâ”€â”€ HealthNeedIndexSection.jsx
+â”‚   â”‚   â”‚   â”œâ”€â”€ CountyComparisonTool.jsx
+â”‚   â”‚   â”‚   â””â”€â”€ MarketDynamicsSection.jsx
+â”‚   â”‚   â”œâ”€â”€ pages/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Dashboard.jsx
+â”‚   â”‚   â”‚   â””â”€â”€ CountyExplorer.jsx
+â”‚   â”‚   â”œâ”€â”€ config/
+â”‚   â”‚   â”‚   â””â”€â”€ api.js
+â”‚   â”‚   â””â”€â”€ main.jsx
+â”‚   â”œâ”€â”€ package.json
+â”‚   â””â”€â”€ vite.config.js
+â”‚
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ screenshots/
+â”‚   â”œâ”€â”€ V1_COMPLETION_REPORT.md
+â”‚   â”œâ”€â”€ V2_COMPLETION_REPORT.md
+â”‚   â”œâ”€â”€ V3_COMPLETION_REPORT.md
+â”‚   â”œâ”€â”€ V4_KDHS_INDICATOR_DICTIONARY.md
+â”‚   â”œâ”€â”€ V4_HEALTH_NEED_INDEX_FORMULA.md
+â”‚   â””â”€â”€ V4_COMPLETION_REPORT.md
+â”‚
+â”œâ”€â”€ .github/
+â”‚   â””â”€â”€ workflows/
+â”‚       â””â”€â”€ keep-backend-awake.yml
+â”‚
+â””â”€â”€ README.md
 ```
 
 ---
@@ -1476,3 +1476,4 @@ Live dashboard:
 ```text
 https://kenya-health-dashboard.vercel.app/
 ```
+
