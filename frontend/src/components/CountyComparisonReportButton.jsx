@@ -346,12 +346,6 @@ export default function CountyComparisonReportButton({
             Dashboard: https://kenya-health-dashboard.vercel.app/<br />
             County Explorer: https://kenya-health-dashboard.vercel.app/county-explorer
           </p>
-
-          <script>
-            window.onload = function () {
-              window.print()
-            }
-          </script>
         </body>
       </html>
     `
@@ -359,7 +353,7 @@ export default function CountyComparisonReportButton({
     const reportWindow = window.open(
       "",
       "_blank",
-      "width=900,height=1100,noopener,noreferrer"
+      "width=900,height=1100"
     )
 
     if (!reportWindow) {
@@ -370,6 +364,11 @@ export default function CountyComparisonReportButton({
     reportWindow.document.open()
     reportWindow.document.write(reportHtml)
     reportWindow.document.close()
+
+    window.setTimeout(() => {
+      reportWindow.focus()
+      reportWindow.print()
+    }, 250)
   }
 
   return (
@@ -382,3 +381,4 @@ export default function CountyComparisonReportButton({
     </button>
   )
 }
+

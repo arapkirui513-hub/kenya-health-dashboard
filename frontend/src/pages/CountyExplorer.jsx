@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import CountyComparisonTool from "../components/CountyComparisonTool"
@@ -30,7 +30,7 @@ export default function CountyExplorer() {
           axios.get(`${API_BASE}/counties`),
           axios.get(`${API_BASE}/service-gap-score`),
           axios.get(`${API_BASE}/planning-priority-index`),
-          axios.get(`${API_BASE}/health-need-index`),
+          axios.get(`${API_BASE}/county-health-needs`),
         ])
 
         setAccessDensity(accessResponse.data || [])
