@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import CountyComparisonTool from "../components/CountyComparisonTool"
@@ -40,7 +40,7 @@ export default function CountyExplorer() {
         setHealthNeedIndex(healthNeedResponse.data || [])
       } catch (err) {
         console.error(err)
-        setError("Unable to load county comparison data. Please try again.")
+        setError("Unable to load county comparison data. The backend may still be waking up. Please refresh or try again in a moment.")
       } finally {
         setLoading(false)
       }
@@ -81,7 +81,7 @@ export default function CountyExplorer() {
         {loading ? (
           <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <p className="text-sm font-medium text-slate-600">
-              Loading county comparison data...
+              Loading county comparison data. This may take a moment if the backend is waking up.
             </p>
           </section>
         ) : error ? (
@@ -101,3 +101,4 @@ export default function CountyExplorer() {
     </main>
   )
 }
+

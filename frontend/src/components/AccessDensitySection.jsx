@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import {
   ResponsiveContainer,
@@ -23,7 +23,7 @@ function AccessDensitySection({ apiBase }) {
         setLoading(false)
       })
       .catch(() => {
-        setError("Could not load population-adjusted access data.")
+        setError("Could not load population-adjusted access data. The backend may still be waking up. Please refresh or try again in a moment.")
         setLoading(false)
       })
   }, [apiBase])
@@ -117,7 +117,7 @@ function AccessDensitySection({ apiBase }) {
     return (
       <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
         <p className="text-sm text-slate-500">
-          Loading population-adjusted access data...
+          Loading population-adjusted access data. This may take a moment if the backend is waking up.
         </p>
       </section>
     )
@@ -195,7 +195,7 @@ function AccessDensitySection({ apiBase }) {
         </p>
 
         <p className="mt-2 text-sm leading-6 text-health-800">
-          Formula: facility density = facilities ÷ population × 100,000.
+          Formula: facility density = facilities Ã· population Ã— 100,000.
         </p>
       </div>
 

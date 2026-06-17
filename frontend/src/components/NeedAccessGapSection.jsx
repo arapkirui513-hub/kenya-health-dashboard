@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
@@ -120,7 +120,7 @@ export default function NeedAccessGapSection() {
         const response = await fetch(`${API_BASE_URL}/need-access-gap-index`)
 
         if (!response.ok) {
-          throw new Error("Failed to load need-access gap data.")
+          throw new Error("Could not load need-access gap data. The backend may still be waking up. Please refresh or try again in a moment.")
         }
 
         const payload = await response.json()
@@ -131,7 +131,7 @@ export default function NeedAccessGapSection() {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || "Unable to load need-access gap data.")
+          setError(err.message || "Unable to load need-access gap data. Please refresh or try again in a moment.")
         }
       } finally {
         if (isMounted) {
@@ -186,7 +186,7 @@ export default function NeedAccessGapSection() {
 
       {loading && (
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
-          Loading need-access gap insights...
+          Loading need-access gap insights. This may take a moment if the backend is waking up.
         </div>
       )}
 

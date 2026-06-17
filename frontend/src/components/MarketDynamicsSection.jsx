@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useMemo, useState } from "react"
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
@@ -16,7 +16,7 @@ function formatPct(value) {
 function normalizeCountyName(name) {
   return String(name || "")
     .toLowerCase()
-    .replace(/['’]/g, "")
+    .replace(/['â€™]/g, "")
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
     .trim()
@@ -64,11 +64,11 @@ export default function MarketDynamicsSection() {
         ])
 
         if (!countiesResponse.ok) {
-          throw new Error("Failed to load county ownership data")
+          throw new Error("Could not load county ownership data. The backend may still be waking up. Please refresh or try again in a moment.")
         }
 
         if (!accessResponse.ok) {
-          throw new Error("Failed to load access density data")
+          throw new Error("Could not load access density data. The backend may still be waking up. Please refresh or try again in a moment.")
         }
 
         const countiesData = await countiesResponse.json()
@@ -77,7 +77,7 @@ export default function MarketDynamicsSection() {
         setCounties(countiesData)
         setAccessDensity(accessData)
       } catch (err) {
-        setError(err.message || "Unable to load market dynamics data")
+        setError(err.message || "Unable to load market dynamics data. Please refresh or try again in a moment.")
       } finally {
         setLoading(false)
       }
@@ -153,7 +153,7 @@ export default function MarketDynamicsSection() {
   if (loading) {
     return (
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm text-slate-500">Loading ownership and market dynamics...</p>
+        <p className="text-sm text-slate-500">Loading ownership and market dynamics. This may take a moment if the backend is waking up.</p>
       </section>
     )
   }
