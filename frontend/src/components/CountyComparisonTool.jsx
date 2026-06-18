@@ -3,10 +3,9 @@ import CountyInsightBrief from "./CountyInsightBrief"
 import CountyComparisonReportButton from "./CountyComparisonReportButton"
 
 const normalizeCounty = (name = "") =>
-  name
+  String(name)
     .toLowerCase()
-    .replace(/\bcity\b/g, "")
-    .replace(/[â€™']/g, "")
+    .replace(/[\u2019']/g, "")
     .replace(/[^a-z0-9]/g, "")
 
 const findCounty = (rows, countyName) =>
@@ -19,22 +18,17 @@ const toNumber = (value) => {
 
 const formatCount = (value) => {
   const number = toNumber(value)
-  return number === null ? "Ã¢â‚¬â€" : number.toLocaleString()
+  return number === null ? "N/A" : number.toLocaleString()
 }
 
 const formatRate = (value) => {
   const number = toNumber(value)
-  return number === null ? "Ã¢â‚¬â€" : `${number.toFixed(1)} per 100k`
+  return number === null ? "-" : `${number.toFixed(1)} per 100k`
 }
 
 const formatDecimal = (value) => {
   const number = toNumber(value)
-
-  return number === null
-    ? "Ã¢â‚¬â€"
-    : number.toLocaleString(undefined, {
-        maximumFractionDigits: 1,
-      })
+  return number === null ? "-" : number.toFixed(1)
 }
 
 
@@ -62,18 +56,17 @@ const formatReasonFlags = (value) => {
 
 const formatArea = (value) => {
   const number = toNumber(value)
-  return number === null ? "Ã¢â‚¬â€" : `${number.toLocaleString()} kmÃ‚Â²`
+  return number === null ? "-" : `${number.toLocaleString()} sq km`
 }
 
 const formatPercent = (value) => {
   const number = toNumber(value)
 
   if (number === null) {
-    return "Ã¢â‚¬â€"
+    return "-"
   }
 
-  const normalized = number <= 1 ? number * 100 : number
-  return `${normalized.toFixed(1)}%`
+  return `${number.toFixed(1)}%`
 }
 
 const ownershipPercent = (part, total) => {
@@ -505,7 +498,7 @@ export default function CountyComparisonTool({
           highlight: true,
         },
         {
-          label: "Population density per kmÃ‚Â²",
+          label: "Population density per sq km",
           a: countyADensity?.density_per_km2,
           b: countyBDensity?.density_per_km2,
           formatter: formatDecimal,
@@ -840,3 +833,4 @@ export default function CountyComparisonTool({
     </section>
   )
 }
+

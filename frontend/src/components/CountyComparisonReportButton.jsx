@@ -7,7 +7,7 @@ const normalizeCounty = (name = "") =>
   String(name)
     .toLowerCase()
     .replace(/\bcity\b/g, "")
-    .replace(/[’']/g, "")
+    .replace(/[\u2019']/g, "")
     .replace(/[^a-z0-9]/g, "")
 
 const formatCount = (value) => {

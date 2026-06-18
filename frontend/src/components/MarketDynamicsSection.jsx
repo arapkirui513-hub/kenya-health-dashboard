@@ -16,7 +16,7 @@ function formatPct(value) {
 function normalizeCountyName(name) {
   return String(name || "")
     .toLowerCase()
-    .replace(/['â€™]/g, "")
+    .replace(/[\u2019']/g, "")
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
     .trim()

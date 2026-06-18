@@ -81,7 +81,7 @@ function MapLegend({ mobile = false }) {
             />
             <span className="text-slate-700">
               {bucket}
-              {i < BUCKETS.length - 1 ? `â€“${BUCKETS[i + 1] - 1}` : "+"}
+              {i < BUCKETS.length - 1 ? `-${BUCKETS[i + 1] - 1}` : "+"}
             </span>
           </div>
         ))}
@@ -115,7 +115,7 @@ function CountyInfoCard({ county, onClose }) {
           className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xl leading-none text-slate-500 hover:bg-slate-200 hover:text-slate-800"
           aria-label="Close county info"
         >
-          Ã—
+          x
         </button>
       </div>
 
@@ -275,7 +275,7 @@ function MapPage() {
             to="/"
             className="flex min-h-12 w-full items-center justify-center rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 sm:w-auto"
           >
-            â† Back to Dashboard
+             Back to Dashboard
           </Link>
         </div>
       </header>
