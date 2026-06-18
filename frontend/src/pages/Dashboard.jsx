@@ -303,7 +303,7 @@ function Dashboard() {
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
                   Public and private facilities make up the largest share of
-                  Kenyaâ€™s health facility network.
+                  Kenya's health facility network.
                 </p>
 
                 <div className="mt-5 space-y-3">
@@ -613,7 +613,7 @@ function Dashboard() {
 
               <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <p className="text-sm leading-6 text-slate-500">
-                  Showing {startResult.toLocaleString()}â€“
+                  Showing {startResult.toLocaleString()}-
                   {endResult.toLocaleString()} of{" "}
                   {facilityTotal.toLocaleString()} matching facilities.
                 </p>
@@ -623,7 +623,7 @@ function Dashboard() {
                     onClick={handleExport}
                     className="min-h-11 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
                   >
-                    â†“ Export CSV
+                    Export CSV
                   </button>
 
                   <button

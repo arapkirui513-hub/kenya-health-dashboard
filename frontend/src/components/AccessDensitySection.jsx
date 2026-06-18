@@ -195,7 +195,7 @@ function AccessDensitySection({ apiBase }) {
         </p>
 
         <p className="mt-2 text-sm leading-6 text-health-800">
-          Formula: facility density = facilities Ã· population Ã— 100,000.
+          Formula: facility density = facilities / population * 100,000.
         </p>
       </div>
 
