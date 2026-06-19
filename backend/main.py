@@ -26,7 +26,7 @@ from data_loader import (
 )
 
 
-API_VERSION = "v4.0.2"
+API_VERSION = "v5.0.2"
 
 ALLOWED_ORIGINS = [
     "https://kenya-health-dashboard.vercel.app",
@@ -135,6 +135,19 @@ def service_gap_score(request: Request):
     return get_service_gap_score()
 
 
+@app.get("/dashboard-data")
+@limiter.limit("60/minute")
+def dashboard_data(request: Request):
+    return {
+        "summary": get_summary(),
+        "ownership": get_ownership_breakdown(),
+        "facility_types": get_facility_type_breakdown(),
+        "counties": get_county_breakdown(),
+        "services": get_service_breakdown(),
+        "service_gap_scores": get_service_gap_score(),
+    }
+
+
 @app.get("/population")
 @limiter.limit("60/minute")
 def population(request: Request):
@@ -154,22 +167,23 @@ def health_need_index(request: Request):
     return get_health_need_index()
 
 
-
-
 @app.get("/need-access-gap-index")
 @limiter.limit("60/minute")
 def need_access_gap_index(request: Request):
     return get_need_access_gap_index()
+
 
 @app.get("/access-density")
 @limiter.limit("60/minute")
 def access_density(request: Request):
     return get_access_density()
 
+
 @app.get("/planning-priority-index")
 @limiter.limit("60/minute")
 def planning_priority_index(request: Request):
     return get_planning_priority_index()
+
 
 @app.get("/facilities/export")
 @limiter.limit("10/minute")
@@ -229,5 +243,3 @@ def facilities(
         page=page,
         page_size=page_size,
     )
-
-

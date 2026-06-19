@@ -85,32 +85,19 @@ function Dashboard() {
   const [error, setError] = useState("")
 
   useEffect(() => {
-    Promise.all([
-      axios.get(`${API_BASE}/summary`),
-      axios.get(`${API_BASE}/ownership`),
-      axios.get(`${API_BASE}/facility-types`),
-      axios.get(`${API_BASE}/counties`),
-      axios.get(`${API_BASE}/services`),
-      axios.get(`${API_BASE}/service-gap-score`),
-    ])
-      .then(
-        ([
-          summaryResponse,
-          ownershipResponse,
-          facilityTypesResponse,
-          countiesResponse,
-          servicesResponse,
-          serviceGapResponse,
-        ]) => {
-          setSummary(summaryResponse.data)
-          setOwnership(ownershipResponse.data)
-          setFacilityTypes(facilityTypesResponse.data)
-          setCounties(countiesResponse.data)
-          setServices(servicesResponse.data)
-          setServiceGapScores(serviceGapResponse.data)
-          setLoading(false)
-        }
-      )
+    axios
+      .get(`${API_BASE}/dashboard-data`)
+      .then((response) => {
+        const dashboardData = response.data
+
+        setSummary(dashboardData.summary)
+        setOwnership(dashboardData.ownership)
+        setFacilityTypes(dashboardData.facility_types)
+        setCounties(dashboardData.counties)
+        setServices(dashboardData.services)
+        setServiceGapScores(dashboardData.service_gap_scores)
+        setLoading(false)
+      })
       .catch(() => {
         setError(
           "Could not load dashboard data. The backend may still be waking up. Please refresh or try again in a moment."
