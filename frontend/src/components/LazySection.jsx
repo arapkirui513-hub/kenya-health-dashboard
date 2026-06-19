@@ -1,6 +1,10 @@
 ﻿import { useEffect, useRef, useState } from "react"
 
-export default function LazySection({ children, minHeight = "240px" }) {
+export default function LazySection({
+  children,
+  minHeight = "240px",
+  onVisible,
+}) {
   const sectionRef = useRef(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -15,6 +19,11 @@ export default function LazySection({ children, minHeight = "240px" }) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true)
+
+          if (typeof onVisible === "function") {
+            onVisible()
+          }
+
           observer.disconnect()
         }
       },
@@ -27,7 +36,7 @@ export default function LazySection({ children, minHeight = "240px" }) {
     observer.observe(node)
 
     return () => observer.disconnect()
-  }, [isVisible])
+  }, [isVisible, onVisible])
 
   return (
     <div ref={sectionRef} style={{ minHeight }}>
