@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 
 const PRIORITY_LEVEL_FILTERS = [
@@ -18,14 +18,14 @@ function formatScore(value) {
 
 function getPriorityBadgeClass(level) {
   if (level === "High") {
-    return "border-red-200 bg-red-50 text-red-700"
+    return "border-red-300 bg-red-50 text-red-800"
   }
 
   if (level === "Medium") {
-    return "border-amber-200 bg-amber-50 text-amber-700"
+    return "border-amber-300 bg-amber-50 text-amber-800"
   }
 
-  return "border-emerald-200 bg-emerald-50 text-emerald-700"
+  return "border-emerald-200 bg-emerald-50 text-emerald-800"
 }
 
 function getFilterButtonClass(isSelected) {
@@ -91,11 +91,11 @@ function downloadCsv(filename, rows) {
 function PrioritySummaryCard({ title, value, description }) {
   return (
     <div className="rounded-2xl border bg-white p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
         {title}
       </p>
       <p className="mt-2 text-2xl font-bold text-slate-950">{value}</p>
-      <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
+      <p className="mt-1 text-sm leading-6 text-slate-700">{description}</p>
     </div>
   )
 }
@@ -153,15 +153,15 @@ function MethodologyModal({ onClose }) {
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-red-100 bg-red-50 p-4">
             <p className="text-sm font-bold text-red-800">High priority</p>
-            <p className="mt-1 text-sm text-red-700">70 to 100</p>
+            <p className="mt-1 text-sm text-red-800">70 to 100</p>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
             <p className="text-sm font-bold text-amber-800">Medium priority</p>
-            <p className="mt-1 text-sm text-amber-700">40 to 69</p>
+            <p className="mt-1 text-sm text-amber-800">40 to 69</p>
           </div>
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
             <p className="text-sm font-bold text-emerald-800">Low priority</p>
-            <p className="mt-1 text-sm text-emerald-700">Below 40</p>
+            <p className="mt-1 text-sm text-emerald-800">Below 40</p>
           </div>
         </div>
 
@@ -345,7 +345,7 @@ function PriorityIndexSection({ apiBase }) {
   if (error) {
     return (
       <section className="mt-6 rounded-2xl border border-red-100 bg-red-50 p-4 shadow-sm sm:mt-8 sm:p-6">
-        <p className="text-sm font-semibold text-red-700">{error}</p>
+        <p className="text-sm font-semibold text-red-800">{error}</p>
       </section>
     )
   }
@@ -370,13 +370,13 @@ function PriorityIndexSection({ apiBase }) {
 
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
             <div className="rounded-2xl border bg-slate-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                 Highest priority county
               </p>
               <p className="mt-1 text-lg font-bold text-slate-950">
                 {summary.highestPriorityCounty?.county || "N/A"}
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-700">
                 Score: {formatScore(summary.highestPriorityCounty?.priority_score)}
               </p>
             </div>
@@ -429,7 +429,7 @@ function PriorityIndexSection({ apiBase }) {
               <h3 className="text-lg font-bold text-slate-950">
                 {activeFilter?.label || "All counties"}
               </h3>
-              <p className="mt-1 text-sm leading-6 text-slate-500">
+              <p className="mt-1 text-sm leading-6 text-slate-700">
                 Showing {filteredPriorityIndex.length} of {priorityIndex.length}{" "}
                 counties in the Planning Priority Index.
               </p>
@@ -452,7 +452,7 @@ function PriorityIndexSection({ apiBase }) {
           </div>
 
           {filteredPriorityIndex.length === 0 ? (
-            <div className="mt-5 rounded-2xl border border-dashed bg-white p-6 text-sm font-medium text-slate-500">
+            <div className="mt-5 rounded-2xl border border-dashed bg-white p-6 text-sm font-medium text-slate-700">
               No counties match this priority filter. Try All counties or another priority level.
             </div>
           ) : (
@@ -460,7 +460,7 @@ function PriorityIndexSection({ apiBase }) {
               <div className="mt-5 hidden overflow-x-auto md:block">
                 <table className="min-w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b text-xs uppercase tracking-wide text-slate-500">
+                    <tr className="border-b text-xs uppercase tracking-wide text-slate-700">
                       <th className="px-3 py-3">Rank</th>
                       <th className="px-3 py-3">County</th>
                       <th className="px-3 py-3">Score</th>
@@ -480,7 +480,7 @@ function PriorityIndexSection({ apiBase }) {
 
                       return (
                         <tr key={county.county} className="border-b last:border-0">
-                          <td className="px-3 py-4 font-semibold text-slate-500">
+                          <td className="px-3 py-4 font-semibold text-slate-700">
                             {getNationalRank(priorityIndex, county.county)}
                           </td>
                           <td className="px-3 py-4 font-semibold text-slate-900">
@@ -527,7 +527,7 @@ function PriorityIndexSection({ apiBase }) {
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-xs text-slate-400">
+                                <span className="text-xs text-slate-700">
                                   No major flags
                                 </span>
                               )}
@@ -553,13 +553,13 @@ function PriorityIndexSection({ apiBase }) {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                             Rank {getNationalRank(priorityIndex, county.county)}
                           </p>
                           <p className="font-bold text-slate-950">
                             {county.county}
                           </p>
-                          <p className="text-sm text-slate-500">
+                          <p className="text-sm text-slate-700">
                             Priority score: {formatScore(county.priority_score)}
                           </p>
                         </div>
@@ -576,7 +576,7 @@ function PriorityIndexSection({ apiBase }) {
 
                       <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                         <div className="rounded-xl bg-slate-50 p-3">
-                          <p className="text-xs font-semibold uppercase text-slate-500">
+                          <p className="text-xs font-semibold uppercase text-slate-700">
                             Access
                           </p>
                           <p className="font-bold text-slate-900">
@@ -584,7 +584,7 @@ function PriorityIndexSection({ apiBase }) {
                           </p>
                         </div>
                         <div className="rounded-xl bg-slate-50 p-3">
-                          <p className="text-xs font-semibold uppercase text-slate-500">
+                          <p className="text-xs font-semibold uppercase text-slate-700">
                             Service
                           </p>
                           <p className="font-bold text-slate-900">
@@ -592,7 +592,7 @@ function PriorityIndexSection({ apiBase }) {
                           </p>
                         </div>
                         <div className="rounded-xl bg-slate-50 p-3">
-                          <p className="text-xs font-semibold uppercase text-slate-500">
+                          <p className="text-xs font-semibold uppercase text-slate-700">
                             Ownership
                           </p>
                           <p className="font-bold text-slate-900">
@@ -600,7 +600,7 @@ function PriorityIndexSection({ apiBase }) {
                           </p>
                         </div>
                         <div className="rounded-xl bg-slate-50 p-3">
-                          <p className="text-xs font-semibold uppercase text-slate-500">
+                          <p className="text-xs font-semibold uppercase text-slate-700">
                             Population
                           </p>
                           <p className="font-bold text-slate-900">
@@ -622,7 +622,7 @@ function PriorityIndexSection({ apiBase }) {
                             </span>
                           ))
                         ) : (
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-700">
                             No major flags
                           </span>
                         )}
@@ -638,21 +638,21 @@ function PriorityIndexSection({ apiBase }) {
         <div className="mt-6 grid gap-3 lg:grid-cols-4">
           <div className="rounded-2xl border bg-white p-4">
             <p className="text-sm font-bold text-slate-900">Access Risk</p>
-            <p className="mt-1 text-sm leading-6 text-slate-500">
+            <p className="mt-1 text-sm leading-6 text-slate-700">
               Measures facility density, public facility density, and ART facility
               density per 100,000 people.
             </p>
           </div>
           <div className="rounded-2xl border bg-white p-4">
             <p className="text-sm font-bold text-slate-900">Service Risk</p>
-            <p className="mt-1 text-sm leading-6 text-slate-500">
+            <p className="mt-1 text-sm leading-6 text-slate-700">
               Converts service coverage into risk, so lower coverage increases the
               planning priority score.
             </p>
           </div>
           <div className="rounded-2xl border bg-white p-4">
             <p className="text-sm font-bold text-slate-900">Ownership Risk</p>
-            <p className="mt-1 text-sm leading-6 text-slate-500">
+            <p className="mt-1 text-sm leading-6 text-slate-700">
               Flags strong dependence on one ownership segment, including public,
               private, faith-based, or NGO providers.
             </p>
@@ -661,7 +661,7 @@ function PriorityIndexSection({ apiBase }) {
             <p className="text-sm font-bold text-slate-900">
               Population Pressure
             </p>
-            <p className="mt-1 text-sm leading-6 text-slate-500">
+            <p className="mt-1 text-sm leading-6 text-slate-700">
               Uses population size and population density percentiles across all
               47 counties.
             </p>

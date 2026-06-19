@@ -551,65 +551,92 @@ function Dashboard() {
               </p>
 
               <div className="mt-5 grid gap-3 md:grid-cols-4">
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(event) => {
-                    setSearch(event.target.value)
-                    setPage(1)
-                  }}
-                  placeholder="Search facility name..."
-                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-                />
+  <div>
+    <label htmlFor="facility-search" className="sr-only">
+      Search facility name
+    </label>
+    <input
+      id="facility-search"
+      type="text"
+      value={search}
+      onChange={(event) => {
+        setSearch(event.target.value)
+        setPage(1)
+      }}
+      placeholder="Search facility name..."
+      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+    />
+  </div>
 
-                <select
-                  value={selectedCounty}
-                  onChange={(event) => {
-                    setSelectedCounty(event.target.value)
-                    setPage(1)
-                  }}
-                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-                >
-                  <option value="">All counties</option>
-                  {counties.map((county) => (
-                    <option key={county.county} value={county.county}>
-                      {county.county}
-                    </option>
-                  ))}
-                </select>
+  <div>
+    <label htmlFor="county-filter" className="sr-only">
+      Filter by county
+    </label>
+    <select
+      id="county-filter"
+      aria-label="Filter by county"
+      value={selectedCounty}
+      onChange={(event) => {
+        setSelectedCounty(event.target.value)
+        setPage(1)
+      }}
+      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+    >
+      <option value="">All counties</option>
+      {counties.map((county) => (
+        <option key={county.county} value={county.county}>
+          {county.county}
+        </option>
+      ))}
+    </select>
+  </div>
 
-                <select
-                  value={selectedOwnership}
-                  onChange={(event) => {
-                    setSelectedOwnership(event.target.value)
-                    setPage(1)
-                  }}
-                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-                >
-                  <option value="">All ownership</option>
-                  {ownership.map((item) => (
-                    <option key={item.category} value={item.category}>
-                      {item.category}
-                    </option>
-                  ))}
-                </select>
+  <div>
+    <label htmlFor="ownership-filter" className="sr-only">
+      Filter by ownership
+    </label>
+    <select
+      id="ownership-filter"
+      aria-label="Filter by ownership"
+      value={selectedOwnership}
+      onChange={(event) => {
+        setSelectedOwnership(event.target.value)
+        setPage(1)
+      }}
+      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+    >
+      <option value="">All ownership</option>
+      {ownership.map((item) => (
+        <option key={item.category} value={item.category}>
+          {item.category}
+        </option>
+      ))}
+    </select>
+  </div>
 
-                <select
-                  value={selectedFacilityType}
-                  onChange={(event) => {
-                    setSelectedFacilityType(event.target.value)
-                    setPage(1)
-                  }}
-                  className="min-h-12 rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-                >
-                  <option value="">All facility categories</option>
-                  {facilityTypes.map((item) => (
-                    <option key={item.category} value={item.category}>
-                      {item.category}
-                    </option>
-                  ))}
-                </select>
-              </div>
+  <div>
+    <label htmlFor="facility-category-filter" className="sr-only">
+      Filter by facility category
+    </label>
+    <select
+      id="facility-category-filter"
+      aria-label="Filter by facility category"
+      value={selectedFacilityType}
+      onChange={(event) => {
+        setSelectedFacilityType(event.target.value)
+        setPage(1)
+      }}
+      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+    >
+      <option value="">All facility categories</option>
+      {facilityTypes.map((item) => (
+        <option key={item.category} value={item.category}>
+          {item.category}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
               <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <p className="text-sm leading-6 text-slate-500">

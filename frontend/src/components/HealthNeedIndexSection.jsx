@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import axios from "axios"
 
 const formatScore = (value) => Number(value || 0).toFixed(2)
@@ -9,10 +9,10 @@ const getLevelStyles = (level) => {
   }
 
   if (level === "Moderate Health Need") {
-    return "bg-amber-50 text-amber-700 ring-amber-200"
+    return "bg-amber-50 text-amber-800 ring-amber-200"
   }
 
-  return "bg-emerald-50 text-emerald-700 ring-emerald-200"
+  return "bg-emerald-50 text-emerald-800 ring-emerald-200"
 }
 
 const getScoreBarWidth = (score) => {
@@ -74,7 +74,7 @@ function HealthNeedIndexSection({ apiBase }) {
   if (loading) {
     return (
       <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
-        <p className="text-sm font-medium text-slate-500">
+        <p className="text-sm font-medium text-slate-700">
           Loading Health Need Index. This may take a moment if the backend is waking up.
         </p>
       </section>
@@ -93,7 +93,7 @@ function HealthNeedIndexSection({ apiBase }) {
     <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
             KDHS 2022 Health Need
           </p>
           <h3 className="mt-1 text-xl font-bold text-slate-950 sm:text-2xl">
@@ -121,35 +121,35 @@ function HealthNeedIndexSection({ apiBase }) {
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border bg-slate-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Average score</p>
+          <p className="text-sm font-medium text-slate-700">Average score</p>
           <p className="mt-2 text-2xl font-bold text-slate-950">
             {formatScore(summary.averageScore)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Across 47 counties</p>
+          <p className="mt-1 text-xs text-slate-700">Across 47 counties</p>
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-4">
-          <p className="text-sm font-medium text-slate-500">High need</p>
+          <p className="text-sm font-medium text-slate-700">High need</p>
           <p className="mt-2 text-2xl font-bold text-rose-700">
             {summary.highCount}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Score 60-100</p>
+          <p className="mt-1 text-xs text-slate-700">Score 60-100</p>
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Moderate need</p>
-          <p className="mt-2 text-2xl font-bold text-amber-700">
+          <p className="text-sm font-medium text-slate-700">Moderate need</p>
+          <p className="mt-2 text-2xl font-bold text-amber-800">
             {summary.moderateCount}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Score 35-59</p>
+          <p className="mt-1 text-xs text-slate-700">Score 35-59</p>
         </div>
 
         <div className="rounded-2xl border bg-slate-50 p-4">
-          <p className="text-sm font-medium text-slate-500">Lower need</p>
-          <p className="mt-2 text-2xl font-bold text-emerald-700">
+          <p className="text-sm font-medium text-slate-700">Lower need</p>
+          <p className="mt-2 text-2xl font-bold text-emerald-800">
             {summary.lowerCount}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Score 0-34</p>
+          <p className="mt-1 text-xs text-slate-700">Score 0-34</p>
         </div>
       </div>
 
@@ -169,12 +169,12 @@ function HealthNeedIndexSection({ apiBase }) {
           <h4 className="text-base font-bold text-slate-950">
             Top 10 health-need counties
           </h4>
-          <p className="text-xs text-slate-500">Sorted by score descending</p>
+          <p className="text-xs text-slate-700">Sorted by score descending</p>
         </div>
 
         <div className="mt-4 hidden overflow-hidden rounded-2xl border sm:block">
           <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-700">
               <tr>
                 <th className="px-4 py-3">Rank</th>
                 <th className="px-4 py-3">County</th>
@@ -186,7 +186,7 @@ function HealthNeedIndexSection({ apiBase }) {
             <tbody className="divide-y divide-slate-100 bg-white">
               {topCounties.map((county, index) => (
                 <tr key={county.county}>
-                  <td className="px-4 py-3 font-semibold text-slate-500">
+                  <td className="px-4 py-3 font-semibold text-slate-700">
                     #{index + 1}
                   </td>
                   <td className="px-4 py-3 font-semibold text-slate-950">
@@ -232,7 +232,7 @@ function HealthNeedIndexSection({ apiBase }) {
             <div key={county.county} className="rounded-2xl border p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold text-slate-500">
+                  <p className="text-xs font-semibold text-slate-700">
                     #{index + 1}
                   </p>
                   <p className="text-base font-bold text-slate-950">
