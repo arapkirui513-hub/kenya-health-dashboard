@@ -116,6 +116,47 @@ Ownership categories include:
 * Community
 * Academic
 
+## Production Performance Results
+
+The dashboard was optimized for production performance, accessibility, SEO, and lightweight initial loading.
+
+### PageSpeed Insights Results
+
+Latest mobile PageSpeed Insights score:
+
+| Category         | Score |
+| ---------------- | ----: |
+| Performance      |    95 |
+| Accessibility    |   100 |
+| Best Practices   |   100 |
+| SEO              |   100 |
+| Agentic Browsing |   2/3 |
+
+### Before vs After
+
+| Metric         | Before | After |
+| -------------- | -----: | ----: |
+| Performance    |     56 |    95 |
+| Accessibility  |    100 |   100 |
+| Best Practices |    100 |   100 |
+| SEO            |    100 |   100 |
+
+### What Improved
+
+* Added route-level code splitting for Dashboard, County Explorer, and Map pages.
+* Lazy-loaded heavy dashboard sections.
+* Deferred Facility Finder API calls until users scroll near that section.
+* Reduced the Dashboard JavaScript chunk from about 435 kB to about 48 kB.
+* Prevented the large MapPage bundle from loading during homepage initial load.
+
+### Evidence
+
+The PageSpeed result is documented in:
+
+* `docs/PERFORMANCE_OPTIMIZATION_NOTE.md`
+* `docs/screenshots/pagespeed-after-performance-optimization.png`
+
+
 ### County Planning Priority Index
 
 Ranks counties using planning signals from:
