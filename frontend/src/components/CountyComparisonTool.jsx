@@ -1,4 +1,4 @@
-﻿import { Fragment, useMemo, useState } from "react"
+import { Fragment, useMemo, useState } from "react"
 import CountyInsightBrief from "./CountyInsightBrief"
 import CountyComparisonReportButton from "./CountyComparisonReportButton"
 
@@ -30,7 +30,6 @@ const formatDecimal = (value) => {
   const number = toNumber(value)
   return number === null ? "-" : number.toFixed(1)
 }
-
 
 const formatPriorityScore = (value) => {
   const number = toNumber(value)
@@ -95,29 +94,28 @@ const getHigherSide = (a, b, shouldHighlight) => {
   return aValue > bValue ? "A" : "B"
 }
 
-
 const getPriorityBadgeClass = (level) => {
   if (level === "High") {
-    return "border-red-200 bg-red-50 text-red-700"
+    return "border-red-200 bg-red-50 text-red-800"
   }
 
   if (level === "Medium") {
-    return "border-amber-200 bg-amber-50 text-amber-700"
+    return "border-amber-200 bg-amber-50 text-amber-800"
   }
 
-  return "border-emerald-200 bg-emerald-50 text-emerald-700"
+  return "border-emerald-200 bg-emerald-50 text-emerald-800"
 }
 
 const getHealthNeedBadgeClass = (level) => {
   if (level === "High Health Need") {
-    return "border-rose-200 bg-rose-50 text-rose-700"
+    return "border-rose-200 bg-rose-50 text-rose-800"
   }
 
   if (level === "Moderate Health Need") {
-    return "border-amber-200 bg-amber-50 text-amber-700"
+    return "border-amber-200 bg-amber-50 text-amber-800"
   }
 
-  return "border-emerald-200 bg-emerald-50 text-emerald-700"
+  return "border-emerald-200 bg-emerald-50 text-emerald-800"
 }
 
 function MetricCell({ value, formatter, isHighlighted }) {
@@ -149,7 +147,7 @@ function MobileMetricCard({ row, selectedA, selectedB }) {
               : "border-slate-100 bg-slate-50"
           }`}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
             {selectedA}
           </p>
           <p
@@ -168,7 +166,7 @@ function MobileMetricCard({ row, selectedA, selectedB }) {
               : "border-slate-100 bg-slate-50"
           }`}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
             {selectedB}
           </p>
           <p
@@ -184,7 +182,6 @@ function MobileMetricCard({ row, selectedA, selectedB }) {
   )
 }
 
-
 function PriorityReasonCard({ title, priority }) {
   const flags = Array.isArray(priority?.reason_flags)
     ? priority.reason_flags.slice(0, 5)
@@ -197,7 +194,7 @@ function PriorityReasonCard({ title, priority }) {
           <h3 className="text-base font-bold text-slate-950 sm:text-lg">
             {title}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">Planning priority</p>
+          <p className="mt-1 text-sm text-slate-700">Planning priority</p>
         </div>
 
         <span
@@ -213,7 +210,7 @@ function PriorityReasonCard({ title, priority }) {
         {formatPriorityScore(priority?.priority_score)}
       </p>
 
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-700">
         Higher scores signal stronger planning attention.
       </p>
 
@@ -222,13 +219,13 @@ function PriorityReasonCard({ title, priority }) {
           flags.map((flag) => (
             <span
               key={flag}
-              className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600"
+              className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-700"
             >
               {flag}
             </span>
           ))
         ) : (
-          <span className="text-sm text-slate-400">No major flags</span>
+          <span className="text-sm text-slate-700">No major flags</span>
         )}
       </div>
     </article>
@@ -247,7 +244,7 @@ function HealthNeedReasonCard({ title, healthNeed }) {
           <h3 className="text-base font-bold text-slate-950 sm:text-lg">
             {title}
           </h3>
-          <p className="mt-1 text-sm text-slate-500">KDHS health need</p>
+          <p className="mt-1 text-sm text-slate-700">KDHS health need</p>
         </div>
 
         <span
@@ -262,7 +259,8 @@ function HealthNeedReasonCard({ title, healthNeed }) {
       <p className="mt-4 text-3xl font-black text-slate-950">
         {formatHealthNeedScore(healthNeed?.health_need_score)}
       </p>
-      <p className="mt-1 text-sm text-slate-500">
+
+      <p className="mt-1 text-sm text-slate-700">
         Higher scores signal stronger KDHS-based health need.
       </p>
 
@@ -277,7 +275,7 @@ function HealthNeedReasonCard({ title, healthNeed }) {
             </span>
           ))
         ) : (
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
             No major flags
           </span>
         )}
@@ -293,7 +291,7 @@ function SummaryCard({ title, density }) {
 
       <dl className="mt-4 grid grid-cols-3 gap-2 sm:block sm:space-y-3">
         <div className="rounded-2xl bg-slate-50 p-2 sm:bg-transparent sm:p-0">
-          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-700 sm:text-xs">
             Population
           </dt>
           <dd className="mt-1 text-base font-bold text-slate-950 sm:text-2xl">
@@ -302,7 +300,7 @@ function SummaryCard({ title, density }) {
         </div>
 
         <div className="rounded-2xl bg-slate-50 p-2 sm:bg-transparent sm:p-0">
-          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-700 sm:text-xs">
             Total facilities
           </dt>
           <dd className="mt-1 text-base font-bold text-slate-950 sm:text-2xl">
@@ -311,7 +309,7 @@ function SummaryCard({ title, density }) {
         </div>
 
         <div className="rounded-2xl bg-teal-50 p-2 sm:bg-transparent sm:p-0">
-          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
+          <dt className="text-[10px] font-medium uppercase tracking-wide text-slate-700 sm:text-xs">
             Facility density
           </dt>
           <dd className="mt-1 text-base font-bold text-teal-800 sm:text-2xl">
@@ -640,11 +638,13 @@ export default function CountyComparisonTool({
           </div>
 
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:max-w-xl">
-            <label className="space-y-1">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label htmlFor="county-a-select" className="space-y-1">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                 County A
               </span>
               <select
+                id="county-a-select"
+                aria-label="Select county A for comparison"
                 value={selectedA}
                 onChange={(event) => setSelectedA(event.target.value)}
                 className="min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
@@ -657,11 +657,13 @@ export default function CountyComparisonTool({
               </select>
             </label>
 
-            <label className="space-y-1">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <label htmlFor="county-b-select" className="space-y-1">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                 County B
               </span>
               <select
+                id="county-b-select"
+                aria-label="Select county B for comparison"
                 value={selectedB}
                 onChange={(event) => setSelectedB(event.target.value)}
                 className="min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-100 sm:text-sm"
@@ -684,7 +686,7 @@ export default function CountyComparisonTool({
                 countyBCounties={countyBCounties}
                 countyAGap={countyAGap}
                 countyBGap={countyBGap}
-                              countyAPriority={countyAPriority}
+                countyAPriority={countyAPriority}
                 countyBPriority={countyBPriority}
                 priorityIndex={priorityIndex}
               />
@@ -729,10 +731,10 @@ export default function CountyComparisonTool({
             countyBDensity={countyBDensity}
             countyAGap={countyAGap}
             countyBGap={countyBGap}
-                          countyAPriority={countyAPriority}
-                countyBPriority={countyBPriority}
-                priorityIndex={priorityIndex}
-              />
+            countyAPriority={countyAPriority}
+            countyBPriority={countyBPriority}
+            priorityIndex={priorityIndex}
+          />
 
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 p-4 sm:p-5">
@@ -749,7 +751,7 @@ export default function CountyComparisonTool({
             <div className="space-y-5 p-4 md:hidden">
               {metricGroups.map((group) => (
                 <section key={group.title} className="space-y-3">
-                  <h4 className="rounded-2xl bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600">
+                  <h4 className="rounded-2xl bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-700">
                     {group.title}
                   </h4>
 
@@ -771,13 +773,13 @@ export default function CountyComparisonTool({
               <table className="min-w-full border-separate border-spacing-y-1 p-3">
                 <thead>
                   <tr className="text-left">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-700">
                       Metric
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-700">
                       {selectedA}
                     </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-700">
                       {selectedB}
                     </th>
                   </tr>
@@ -789,7 +791,7 @@ export default function CountyComparisonTool({
                       <tr>
                         <td
                           colSpan={3}
-                          className="bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"
+                          className="bg-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-700"
                         >
                           {group.title}
                         </td>
@@ -833,4 +835,3 @@ export default function CountyComparisonTool({
     </section>
   )
 }
-
