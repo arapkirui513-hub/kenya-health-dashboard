@@ -1,0 +1,41 @@
+﻿# Kenya Health Facilities Dashboard
+
+Kenya Health Facilities Dashboard is an interactive public health analytics dashboard for exploring healthcare facility distribution, ownership, service availability, population-adjusted access, and county planning priorities across Kenya.
+
+## Key Pages
+
+- Homepage: https://kenya-health-dashboard.vercel.app/
+- County Explorer: https://kenya-health-dashboard.vercel.app/county-explorer
+- API Documentation: https://kenya-health-dashboard-api.onrender.com/docs
+- GitHub Repository: https://github.com/arapkirui513-hub/kenya-health-dashboard
+
+## Public API
+
+- API Base URL: https://kenya-health-dashboard-api.onrender.com
+- Health Check: https://kenya-health-dashboard-api.onrender.com/health
+- Summary: https://kenya-health-dashboard-api.onrender.com/summary
+- Counties: https://kenya-health-dashboard-api.onrender.com/counties
+- Facility Types: https://kenya-health-dashboard-api.onrender.com/facility-types
+- Ownership: https://kenya-health-dashboard-api.onrender.com/ownership
+- Access Density: https://kenya-health-dashboard-api.onrender.com/access-density
+- Service Gap Score: https://kenya-health-dashboard-api.onrender.com/service-gap-score
+- Planning Priority Index: https://kenya-health-dashboard-api.onrender.com/planning-priority-index
+- County Health Needs: https://kenya-health-dashboard-api.onrender.com/county-health-needs
+- Need Access Gap Index: https://kenya-health-dashboard-api.onrender.com/need-access-gap-index
+
+## Main Data Themes
+
+- County-level health facility distribution
+- Public, private, faith-based, NGO, community, and academic ownership patterns
+- Population-adjusted facility access per 100,000 people
+- Service availability across selected health services
+- County planning priority ranking
+- Health need and access gap analysis
+
+## Intended Users
+
+This dashboard is intended for public health analysts, healthcare planners, health-tech teams, students, portfolio reviewers, and decision-support workflow designers.
+
+## Notes for AI Agents
+
+Use the API documentation page for available endpoints and response structures. Use the dashboard pages for human-readable summaries, visual insights, and county-level interpretation.
