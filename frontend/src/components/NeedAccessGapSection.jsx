@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
@@ -90,14 +90,14 @@ function normalizeRows(payload) {
 
 function badgeClass(level) {
   if (level === "High") {
-    return "bg-red-100 text-red-700 border-red-200"
+    return "bg-red-100 text-red-800 border-red-300"
   }
 
   if (level === "Moderate") {
-    return "bg-amber-100 text-amber-700 border-amber-200"
+    return "bg-amber-100 text-amber-800 border-amber-300"
   }
 
-  return "bg-emerald-100 text-emerald-700 border-emerald-200"
+  return "bg-emerald-100 text-emerald-800 border-emerald-200"
 }
 
 function countByLevel(rows, level) {
@@ -191,7 +191,7 @@ export default function NeedAccessGapSection() {
       )}
 
       {!loading && error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+        <div className="rounded-xl border border-red-300 bg-red-50 p-5 text-sm text-red-800">
           {error}
         </div>
       )}
@@ -206,7 +206,7 @@ export default function NeedAccessGapSection() {
         <>
           <div className="grid gap-4 md:grid-cols-4">
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                 Highest gap concern
               </p>
               <p className="mt-2 text-2xl font-bold text-slate-900">
@@ -218,7 +218,7 @@ export default function NeedAccessGapSection() {
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
                 Average gap score
               </p>
               <p className="mt-2 text-2xl font-bold text-slate-900">
@@ -229,24 +229,24 @@ export default function NeedAccessGapSection() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-red-600">
+            <div className="rounded-xl border border-red-300 bg-red-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-red-800">
                 High concern
               </p>
-              <p className="mt-2 text-2xl font-bold text-red-700">
+              <p className="mt-2 text-2xl font-bold text-red-800">
                 {highCount}
               </p>
-              <p className="mt-1 text-sm text-red-700">counties</p>
+              <p className="mt-1 text-sm text-red-800">counties</p>
             </div>
 
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
+            <div className="rounded-xl border border-amber-300 bg-amber-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">
                 Moderate / Lower
               </p>
-              <p className="mt-2 text-2xl font-bold text-amber-700">
+              <p className="mt-2 text-2xl font-bold text-amber-800">
                 {moderateCount} / {lowerCount}
               </p>
-              <p className="mt-1 text-sm text-amber-700">counties</p>
+              <p className="mt-1 text-sm text-amber-800">counties</p>
             </div>
           </div>
 
@@ -286,7 +286,7 @@ export default function NeedAccessGapSection() {
                     </div>
 
                     <div className="mt-3">
-                      <div className="mb-1 flex justify-between text-xs text-slate-500">
+                      <div className="mb-1 flex justify-between text-xs text-slate-700">
                         <span>Gap score</span>
                         <span>{formatScore(row.score)}</span>
                       </div>
