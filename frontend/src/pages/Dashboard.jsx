@@ -1,12 +1,8 @@
-﻿import { useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
-import AccessDensitySection from "../components/AccessDensitySection"
-import PriorityIndexSection from "../components/PriorityIndexSection"
 import { API_BASE } from "../config/api"
-import MarketDynamicsSection from "../components/MarketDynamicsSection"
-import HealthNeedIndexSection from "../components/HealthNeedIndexSection"
-import NeedAccessGapSection from "../components/NeedAccessGapSection"
+import LazySection from "../components/LazySection"
 import {
   PieChart,
   Pie,
@@ -21,14 +17,48 @@ import {
   CartesianGrid,
 } from "recharts"
 
+const AccessDensitySection = lazy(() =>
+  import("../components/AccessDensitySection")
+)
 
-const COLORS = ["#047857", "#10b981", "#34d399", "#6ee7b7", "#a7f3d0", "#064e3b"]
+const NeedAccessGapSection = lazy(() =>
+  import("../components/NeedAccessGapSection")
+)
+
+const PriorityIndexSection = lazy(() =>
+  import("../components/PriorityIndexSection")
+)
+
+const HealthNeedIndexSection = lazy(() =>
+  import("../components/HealthNeedIndexSection")
+)
+
+const MarketDynamicsSection = lazy(() =>
+  import("../components/MarketDynamicsSection")
+)
+
+const COLORS = [
+  "#047857",
+  "#10b981",
+  "#34d399",
+  "#6ee7b7",
+  "#a7f3d0",
+  "#064e3b",
+]
 
 const formatNumber = (value) => Number(value || 0).toLocaleString()
 
 const getMaxValue = (items, key) => {
   const values = items.map((item) => Number(item[key])).filter(Number.isFinite)
   return Math.max(...values, 1)
+}
+
+function SectionFallback({ label = "Loading section..." }) {
+  return (
+    <div className="mt-6 rounded-2xl border bg-white p-5 shadow-sm sm:mt-8">
+      <p className="text-sm font-medium text-slate-700">{label}</p>
+    </div>
+  )
 }
 
 function Dashboard() {
@@ -50,7 +80,8 @@ function Dashboard() {
   const [pageSize] = useState(10)
 
   const [loading, setLoading] = useState(true)
-  const [facilityLoading, setFacilityLoading] = useState(false)
+  const [facilityLoading, setFacilityLoading] = useState(true)
+  const [facilityFinderVisible, setFacilityFinderVisible] = useState(false)
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -81,12 +112,18 @@ function Dashboard() {
         }
       )
       .catch(() => {
-        setError("Could not load dashboard data. The backend may still be waking up. Please refresh or try again in a moment.")
+        setError(
+          "Could not load dashboard data. The backend may still be waking up. Please refresh or try again in a moment."
+        )
         setLoading(false)
       })
   }, [])
 
   useEffect(() => {
+    if (!facilityFinderVisible) {
+      return undefined
+    }
+
     setFacilityLoading(true)
 
     const params = {
@@ -109,7 +146,17 @@ function Dashboard() {
       .catch(() => {
         setFacilityLoading(false)
       })
-  }, [search, selectedCounty, selectedOwnership, selectedFacilityType, page, pageSize])
+
+    return undefined
+  }, [
+    facilityFinderVisible,
+    search,
+    selectedCounty,
+    selectedOwnership,
+    selectedFacilityType,
+    page,
+    pageSize,
+  ])
 
   const topCounties = counties.slice(0, 10)
   const bottomCounties = counties.slice(-5).reverse()
@@ -155,7 +202,9 @@ function Dashboard() {
     if (search) params.append("search", search)
     if (selectedCounty) params.append("county", selectedCounty)
     if (selectedOwnership) params.append("ownership", selectedOwnership)
-    if (selectedFacilityType) params.append("facility_type", selectedFacilityType)
+    if (selectedFacilityType) {
+      params.append("facility_type", selectedFacilityType)
+    }
 
     const url = `${API_BASE}/facilities/export?${params.toString()}`
     window.open(url, "_blank", "noopener,noreferrer")
@@ -196,7 +245,10 @@ function Dashboard() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {loading && (
           <div className="rounded-2xl border bg-white p-5 shadow-sm">
-            <p className="text-slate-600">Loading dashboard data. This may take a moment if the backend is waking up.</p>
+            <p className="text-slate-600">
+              Loading dashboard data. This may take a moment if the backend is
+              waking up.
+            </p>
           </div>
         )}
 
@@ -531,253 +583,298 @@ function Dashboard() {
               </div>
             </section>
 
-            <AccessDensitySection apiBase={API_BASE} />
+            <LazySection minHeight="360px">
+              <Suspense
+                fallback={
+                  <SectionFallback label="Loading population-adjusted access..." />
+                }
+              >
+                <AccessDensitySection apiBase={API_BASE} />
+              </Suspense>
+            </LazySection>
 
-            <NeedAccessGapSection />
-            
-            <PriorityIndexSection apiBase={API_BASE} />
+            <LazySection minHeight="360px">
+              <Suspense
+                fallback={
+                  <SectionFallback label="Loading need-access gap index..." />
+                }
+              >
+                <NeedAccessGapSection />
+              </Suspense>
+            </LazySection>
 
-            <HealthNeedIndexSection apiBase={API_BASE} />
+            <LazySection minHeight="360px">
+              <Suspense
+                fallback={
+                  <SectionFallback label="Loading planning priority index..." />
+                }
+              >
+                <PriorityIndexSection apiBase={API_BASE} />
+              </Suspense>
+            </LazySection>
 
-            <MarketDynamicsSection /> 
-            
-            <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
-              <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
-                Facility Finder
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                Search and filter individual health facilities by county,
-                ownership, category, and name.
-              </p>
+            <LazySection minHeight="360px">
+              <Suspense
+                fallback={<SectionFallback label="Loading health need index..." />}
+              >
+                <HealthNeedIndexSection apiBase={API_BASE} />
+              </Suspense>
+            </LazySection>
 
-              <div className="mt-5 grid gap-3 md:grid-cols-4">
-  <div>
-    <label htmlFor="facility-search" className="sr-only">
-      Search facility name
-    </label>
-    <input
-      id="facility-search"
-      type="text"
-      value={search}
-      onChange={(event) => {
-        setSearch(event.target.value)
-        setPage(1)
-      }}
-      placeholder="Search facility name..."
-      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-    />
-  </div>
+            <LazySection minHeight="360px">
+              <Suspense
+                fallback={
+                  <SectionFallback label="Loading ownership and market dynamics..." />
+                }
+              >
+                <MarketDynamicsSection />
+              </Suspense>
+            </LazySection>
 
-  <div>
-    <label htmlFor="county-filter" className="sr-only">
-      Filter by county
-    </label>
-    <select
-      id="county-filter"
-      aria-label="Filter by county"
-      value={selectedCounty}
-      onChange={(event) => {
-        setSelectedCounty(event.target.value)
-        setPage(1)
-      }}
-      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-    >
-      <option value="">All counties</option>
-      {counties.map((county) => (
-        <option key={county.county} value={county.county}>
-          {county.county}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div>
-    <label htmlFor="ownership-filter" className="sr-only">
-      Filter by ownership
-    </label>
-    <select
-      id="ownership-filter"
-      aria-label="Filter by ownership"
-      value={selectedOwnership}
-      onChange={(event) => {
-        setSelectedOwnership(event.target.value)
-        setPage(1)
-      }}
-      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-    >
-      <option value="">All ownership</option>
-      {ownership.map((item) => (
-        <option key={item.category} value={item.category}>
-          {item.category}
-        </option>
-      ))}
-    </select>
-  </div>
-
-  <div>
-    <label htmlFor="facility-category-filter" className="sr-only">
-      Filter by facility category
-    </label>
-    <select
-      id="facility-category-filter"
-      aria-label="Filter by facility category"
-      value={selectedFacilityType}
-      onChange={(event) => {
-        setSelectedFacilityType(event.target.value)
-        setPage(1)
-      }}
-      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
-    >
-      <option value="">All facility categories</option>
-      {facilityTypes.map((item) => (
-        <option key={item.category} value={item.category}>
-          {item.category}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
-
-              <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <p className="text-sm leading-6 text-slate-500">
-                  Showing {startResult.toLocaleString()}-
-                  {endResult.toLocaleString()} of{" "}
-                  {facilityTotal.toLocaleString()} matching facilities.
+            <LazySection
+              minHeight="420px"
+              onVisible={() => setFacilityFinderVisible(true)}
+            >
+              <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm sm:mt-8 sm:p-6">
+                <h3 className="text-xl font-bold text-slate-950 sm:text-lg">
+                  Facility Finder
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Search and filter individual health facilities by county,
+                  ownership, category, and name.
                 </p>
 
-                <div className="grid grid-cols-2 gap-3 sm:flex">
-                  <button
-                    onClick={handleExport}
-                    className="min-h-11 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-                  >
-                    Export CSV
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setSearch("")
-                      setSelectedCounty("")
-                      setSelectedOwnership("")
-                      setSelectedFacilityType("")
-                      setPage(1)
-                    }}
-                    className="min-h-11 rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Clear filters
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-5 space-y-3 md:hidden">
-                {facilityLoading ? (
-                  <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
-                    Loading facilities...
-                  </div>
-                ) : facilities.length > 0 ? (
-                  facilities.map((facility) => (
-                    <FacilityCard
-                      key={facility.facility_code}
-                      facility={facility}
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
+                  <div>
+                    <label htmlFor="facility-search" className="sr-only">
+                      Search facility name
+                    </label>
+                    <input
+                      id="facility-search"
+                      type="text"
+                      value={search}
+                      onChange={(event) => {
+                        setSearch(event.target.value)
+                        setPage(1)
+                      }}
+                      placeholder="Search facility name..."
+                      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
                     />
-                  ))
-                ) : (
-                  <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
-                    No facilities found for the selected filters.
                   </div>
-                )}
-              </div>
 
-              <div className="mt-6 hidden overflow-x-auto md:block">
-                <table className="min-w-full border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b bg-slate-50 text-left text-slate-600">
-                      <th className="px-4 py-3">Facility Name</th>
-                      <th className="px-4 py-3">County</th>
-                      <th className="px-4 py-3">District</th>
-                      <th className="px-4 py-3">Category</th>
-                      <th className="px-4 py-3">Ownership</th>
-                      <th className="px-4 py-3">Beds</th>
-                      <th className="px-4 py-3">Status</th>
-                    </tr>
-                  </thead>
+                  <div>
+                    <label htmlFor="county-filter" className="sr-only">
+                      Filter by county
+                    </label>
+                    <select
+                      id="county-filter"
+                      aria-label="Filter by county"
+                      value={selectedCounty}
+                      onChange={(event) => {
+                        setSelectedCounty(event.target.value)
+                        setPage(1)
+                      }}
+                      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+                    >
+                      <option value="">All counties</option>
+                      {counties.map((county) => (
+                        <option key={county.county} value={county.county}>
+                          {county.county}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                  <tbody>
-                    {facilityLoading ? (
-                      <tr>
-                        <td
-                          colSpan="7"
-                          className="px-4 py-6 text-center text-slate-500"
-                        >
-                          Loading facilities...
-                        </td>
+                  <div>
+                    <label htmlFor="ownership-filter" className="sr-only">
+                      Filter by ownership
+                    </label>
+                    <select
+                      id="ownership-filter"
+                      aria-label="Filter by ownership"
+                      value={selectedOwnership}
+                      onChange={(event) => {
+                        setSelectedOwnership(event.target.value)
+                        setPage(1)
+                      }}
+                      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+                    >
+                      <option value="">All ownership</option>
+                      {ownership.map((item) => (
+                        <option key={item.category} value={item.category}>
+                          {item.category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="facility-category-filter" className="sr-only">
+                      Filter by facility category
+                    </label>
+                    <select
+                      id="facility-category-filter"
+                      aria-label="Filter by facility category"
+                      value={selectedFacilityType}
+                      onChange={(event) => {
+                        setSelectedFacilityType(event.target.value)
+                        setPage(1)
+                      }}
+                      className="min-h-12 w-full rounded-2xl border px-4 py-3 text-base outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-100 md:text-sm"
+                    >
+                      <option value="">All facility categories</option>
+                      {facilityTypes.map((item) => (
+                        <option key={item.category} value={item.category}>
+                          {item.category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <p className="text-sm leading-6 text-slate-500">
+                    Showing {startResult.toLocaleString()}-
+                    {endResult.toLocaleString()} of{" "}
+                    {facilityTotal.toLocaleString()} matching facilities.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-3 sm:flex">
+                    <button
+                      onClick={handleExport}
+                      className="min-h-11 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
+                    >
+                      Export CSV
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSearch("")
+                        setSelectedCounty("")
+                        setSelectedOwnership("")
+                        setSelectedFacilityType("")
+                        setPage(1)
+                      }}
+                      className="min-h-11 rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      Clear filters
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-5 space-y-3 md:hidden">
+                  {facilityLoading ? (
+                    <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
+                      Loading facilities...
+                    </div>
+                  ) : facilities.length > 0 ? (
+                    facilities.map((facility) => (
+                      <FacilityCard
+                        key={facility.facility_code}
+                        facility={facility}
+                      />
+                    ))
+                  ) : (
+                    <div className="rounded-2xl border bg-slate-50 p-5 text-center text-sm text-slate-500">
+                      No facilities found for the selected filters.
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-6 hidden overflow-x-auto md:block">
+                  <table className="min-w-full border-collapse text-sm">
+                    <thead>
+                      <tr className="border-b bg-slate-50 text-left text-slate-600">
+                        <th className="px-4 py-3">Facility Name</th>
+                        <th className="px-4 py-3">County</th>
+                        <th className="px-4 py-3">District</th>
+                        <th className="px-4 py-3">Category</th>
+                        <th className="px-4 py-3">Ownership</th>
+                        <th className="px-4 py-3">Beds</th>
+                        <th className="px-4 py-3">Status</th>
                       </tr>
-                    ) : facilities.length > 0 ? (
-                      facilities.map((facility) => (
-                        <tr
-                          key={facility.facility_code}
-                          className="border-b hover:bg-slate-50"
-                        >
-                          <td className="px-4 py-3 font-medium text-slate-800">
-                            {facility.facility_name}
-                          </td>
-                          <td className="px-4 py-3">{facility.county}</td>
-                          <td className="px-4 py-3">{facility.district}</td>
-                          <td className="px-4 py-3">
-                            {facility.facility_category}
-                          </td>
-                          <td className="px-4 py-3">
-                            {facility.ownership_category}
-                          </td>
-                          <td className="px-4 py-3">{facility.beds}</td>
-                          <td className="px-4 py-3">
-                            {facility.operational_status}
+                    </thead>
+
+                    <tbody>
+                      {facilityLoading ? (
+                        <tr>
+                          <td
+                            colSpan="7"
+                            className="px-4 py-6 text-center text-slate-500"
+                          >
+                            Loading facilities...
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="7"
-                          className="px-4 py-6 text-center text-slate-500"
-                        >
-                          No facilities found for the selected filters.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t pt-4 sm:flex-row">
-                <p className="text-sm text-slate-500">
-                  Page {page} of {totalPages || 1}
-                </p>
-
-                <div className="grid w-full grid-cols-2 gap-3 sm:w-auto">
-                  <button
-                    onClick={() =>
-                      setPage((currentPage) => Math.max(currentPage - 1, 1))
-                    }
-                    disabled={page === 1}
-                    className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setPage((currentPage) =>
-                        Math.min(currentPage + 1, totalPages || 1)
-                      )
-                    }
-                    disabled={page >= totalPages}
-                    className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Next
-                  </button>
+                      ) : facilities.length > 0 ? (
+                        facilities.map((facility) => (
+                          <tr
+                            key={facility.facility_code}
+                            className="border-b hover:bg-slate-50"
+                          >
+                            <td className="px-4 py-3 font-medium text-slate-800">
+                              {facility.facility_name}
+                            </td>
+                            <td className="px-4 py-3">{facility.county}</td>
+                            <td className="px-4 py-3">{facility.district}</td>
+                            <td className="px-4 py-3">
+                              {facility.facility_category}
+                            </td>
+                            <td className="px-4 py-3">
+                              {facility.ownership_category}
+                            </td>
+                            <td className="px-4 py-3">{facility.beds}</td>
+                            <td className="px-4 py-3">
+                              {facility.operational_status}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="7"
+                            className="px-4 py-6 text-center text-slate-500"
+                          >
+                            No facilities found for the selected filters.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            </section>
+
+                <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t pt-4 sm:flex-row">
+                  <p className="text-sm text-slate-500">
+                    Page {page} of {totalPages || 1}
+                  </p>
+
+                  <div className="grid w-full grid-cols-2 gap-3 sm:w-auto">
+                    <button
+                      onClick={() =>
+                        setPage((currentPage) =>
+                          Math.max(currentPage - 1, 1)
+                        )
+                      }
+                      disabled={page === 1}
+                      className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        setPage((currentPage) =>
+                          Math.min(currentPage + 1, totalPages || 1)
+                        )
+                      }
+                      disabled={page >= totalPages}
+                      className="rounded-2xl border px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </section>
+            </LazySection>
           </>
         )}
       </main>
@@ -831,7 +928,10 @@ function MobileBarList({ items, labelKey, valueKey, formatter }) {
         const width = value > 0 ? `${Math.max((value / max) * 100, 8)}%` : "0%"
 
         return (
-          <div key={item[labelKey]} className="rounded-2xl border bg-slate-50 p-3">
+          <div
+            key={item[labelKey]}
+            className="rounded-2xl border bg-slate-50 p-3"
+          >
             <div className="flex items-center justify-between gap-3">
               <p className="min-w-0 truncate text-sm font-semibold text-slate-800">
                 {item[labelKey]}
@@ -842,7 +942,10 @@ function MobileBarList({ items, labelKey, valueKey, formatter }) {
             </div>
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-              <div className="h-full rounded-full bg-emerald-700" style={{ width }} />
+              <div
+                className="h-full rounded-full bg-emerald-700"
+                style={{ width }}
+              />
             </div>
           </div>
         )
@@ -863,14 +966,18 @@ function FacilityCard({ facility }) {
           <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             County
           </dt>
-          <dd className="mt-1 font-medium text-slate-800">{facility.county}</dd>
+          <dd className="mt-1 font-medium text-slate-800">
+            {facility.county}
+          </dd>
         </div>
 
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             District
           </dt>
-          <dd className="mt-1 font-medium text-slate-800">{facility.district}</dd>
+          <dd className="mt-1 font-medium text-slate-800">
+            {facility.district}
+          </dd>
         </div>
 
         <div>
