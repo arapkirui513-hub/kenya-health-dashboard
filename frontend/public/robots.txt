@@ -2,3 +2,7 @@
 Allow: /
 
 Sitemap: https://kenya-health-dashboard.vercel.app/sitemap.xml
+
+# Machine-readable project documentation
+Allow: /about-dashboard.html
+Allow: /project-summary.md
