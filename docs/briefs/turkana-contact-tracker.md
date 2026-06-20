@@ -14,11 +14,11 @@
 
 | Priority | Name | Organization | Role | Email | Phone / LinkedIn | Source | Date Contacted | Response | Next Step |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | To find | Turkana County Department of Health and Sanitation | Health Records / M&E Officer |  |  | County website / LinkedIn / phone |  | Not contacted | Find contact |
-| 2 | To find | Turkana County Department of Health and Sanitation | Health Planner / Planning Officer |  |  | County website / referral |  | Not contacted | Find contact |
-| 3 | To find | USAID NAWIRI | Turkana Program / Health Systems Contact |  |  | USAID / implementer website / LinkedIn |  | Not contacted | Find contact |
-| 4 | To find | Amref Kenya / USAID Imarisha Jamii | County Programs / Health Systems Contact |  |  | Amref website / LinkedIn |  | Not contacted | Find contact |
-| 5 | To find | NGO active in Turkana | Health Program Lead |  |  | County partner list / LinkedIn |  | Not contacted | Find contact |
+| 1 | To verify | Turkana County Department of Health and Sanitation | Health Records / M&E Officer | info@turkana.go.ke | County website / phone route | Turkana County official website |  | Not contacted | Email county office asking for M&E / Health Records contact |
+| 2 | To verify | Turkana County Department of Health and Sanitation | Health Planner / Planning Officer | info@turkana.go.ke | County website / referral | Turkana County official website |  | Not contacted | Ask county office who handles annual health planning |
+| 3 | Helen Akuwam Ekron – verify current role | County Government of Turkana | Health Records Officer lead |  | LinkedIn | Public LinkedIn search result |  | Not contacted | Verify profile manually before messaging |
+| 4 | To verify | Amref Kenya / USAID Imarisha Jamii | Turkana county-led health services contact | info@amref.org | Amref contact route | Amref Imarisha Jamii page |  | Not contacted | Ask to be routed to Imarisha Jamii / Turkana team |
+| 5 | To verify | Mercy Corps / USAID Nawiri | Former or current Turkana program contact |  | Mercy Corps / LinkedIn | Mercy Corps Nawiri page |  | Not contacted | Confirm whether Turkana Nawiri contact is still active or ask for referral |
 
 ---
 
