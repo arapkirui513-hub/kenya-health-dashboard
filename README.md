@@ -250,6 +250,14 @@ V4.0.2 added planning-grade reporting support:
 
 ![API documentation](docs/screenshots/v4-0-2-api-docs.png)
 
+### Performance Optimization
+
+![Performance Optimization](docs/screenshots/pagespeed-after-performance-optimization.png)
+
+### SEO & Accessibility
+
+![SEO and Accessibility](docs/screenshots/pagespeed-after-seo-accessibility.png)
+
 ---
 
 ## Data Sources
@@ -486,19 +494,20 @@ Included:
 
 ### V5 – Need-Access Gap Intelligence
 
-Current state:
+**Status:** Released (Frontend V5 • Backend API v5.0.2)
 
-```text
-Early backend/API work is present, but this is not yet packaged as a formal portfolio release.
-```
+V5 extends the Kenya Health Facilities Dashboard with a **Need vs Access Gap** layer that combines healthcare need indicators with service access metrics to identify counties where healthcare demand is high relative to available services.
 
-Planned direction:
+Key additions include:
 
-* High need plus low access flag
-* County intervention watchlist
-* Need-access mismatch layer
-* Public-sector intervention priority
-* County Explorer need-access interpretation
+* Need vs Access Gap Index
+* County intervention prioritization
+* County Explorer integration
+* Backend API support (`/need-access-gap-index`)
+* Frontend visualization and interpretation
+* Production-ready portfolio release
+
+See `docs/V5_PRODUCTION_PORTFOLIO_RELEASE.md` for implementation details and release notes.
 
 ---
 
@@ -509,6 +518,7 @@ Planned direction:
 * V3 completion report: `docs/V3_COMPLETION_REPORT.md`
 * V4 completion report: `docs/V4_COMPLETION_REPORT.md`
 * V4.0.2 completion report: `docs/V4_0_2_COMPLETION_REPORT.md`
+* V5 production release: `docs/V5_PRODUCTION_PORTFOLIO_RELEASE.md`
 * Security review: `docs/SECURITY_REVIEW.md`
 * Planning Priority methodology: `docs/PLANNING_PRIORITY_INDEX_METHODOLOGY.md`
 * Health Need methodology: `docs/HEALTH_NEED_INDEX_METHODOLOGY.md`

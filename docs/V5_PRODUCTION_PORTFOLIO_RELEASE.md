@@ -1,4 +1,4 @@
-﻿# V5.0.0 Production Portfolio Release
+﻿# V5 Production Portfolio Release
 
 ## Release Name
 
@@ -12,7 +12,11 @@ June 19, 2026
 
 This release marks the Kenya Health Facilities Dashboard as a production-polished portfolio project.
 
-The dashboard now combines healthcare analytics, county-level planning intelligence, public API access, accessibility improvements, SEO readiness, and verified frontend performance optimization.
+The dashboard now combines healthcare analytics, county-level planning intelligence, Need vs Access Gap analysis, public API access, accessibility improvements, SEO readiness, and production performance optimization into a deployable full-stack portfolio application.
+
+Frontend Release: V5.0.0
+
+Backend API: v5.0.2
 
 ## Key Highlights
 
@@ -23,7 +27,7 @@ The dashboard now combines healthcare analytics, county-level planning intellige
 - Population-adjusted access analysis
 - Ownership and market dynamics analysis
 - Planning priority indicators
-- Health need and access gap indicators
+- Need vs Access Gap Index for county prioritization
 - Printable and export-ready reporting support
 - SEO and accessibility polish
 - PageSpeed performance optimization
@@ -49,6 +53,22 @@ The frontend was optimized by:
 - Deferring Facility Finder API calls until needed
 - Reducing the Dashboard JavaScript chunk from about 435 kB to about 48 kB
 - Preventing the large MapPage bundle from loading during homepage initial load
+
+## System Architecture
+
+Frontend
+- React
+- TypeScript
+- Vite
+
+Backend
+- FastAPI
+- PostgreSQL
+- Pandas
+
+Deployment
+- Frontend hosted on Vercel
+- Backend API hosted on Render
 
 ## Portfolio Value
 

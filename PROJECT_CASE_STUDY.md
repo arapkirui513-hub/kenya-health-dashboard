@@ -258,19 +258,26 @@ Improved reporting, filtering, export, methodology explanation, loading states, 
 
 
 
-### V5 - Need-Access Gap Intelligence
+### V5 – Need-Access Gap Intelligence
 
+**Status:** Released (Frontend V5 • Backend API v5.0.2)
 
+The fifth release extends the dashboard beyond measuring healthcare access by introducing a **Need vs Access Gap** layer. This feature combines healthcare need indicators with access metrics to identify counties where demand for services is high relative to available healthcare resources.
 
-Early backend/API work is present, but this is not yet packaged as a formal portfolio release.
+Key additions include:
 
+- Need vs Access Gap Index
+- County intervention prioritization
+- County Explorer integration
+- Backend API endpoint (`/need-access-gap-index`)
+- Frontend visualization and interpretation
+- Production-ready portfolio release
 
+This release demonstrates how public health datasets can be transformed into practical planning intelligence that supports evidence-based resource allocation and county-level decision-making.
 
----
+For implementation details, see:
 
-
-
-## Population-Adjusted Access
+- `docs/V5_PRODUCTION_PORTFOLIO_RELEASE.md`
 
 
 

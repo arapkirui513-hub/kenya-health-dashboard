@@ -4,7 +4,7 @@
 
 The Kenya Health Facilities Dashboard is a production-ready healthcare analytics dashboard for exploring health facility distribution, ownership patterns, service availability, population-adjusted access, county planning priorities, and health need-access gaps across Kenya.
 
-The project combines a React frontend, a FastAPI backend, public API documentation, county comparison tools, export/reporting features, and production performance optimization.
+The project combines a React frontend, a FastAPI backend, county-level planning intelligence, public API documentation, interactive comparison tools, export/reporting features, and production-grade performance optimization into a full-stack healthcare analytics platform.
 
 ## Live Links
 
@@ -35,10 +35,10 @@ The dashboard helps users explore:
 - Service availability analysis
 - ART service gap indicators
 - Population-adjusted access analysis
+- Planning Priority Index
+- Health Need Index
+- Need vs Access Gap Index
 - County Explorer and county comparison workflow
-- Planning priority indicators
-- Health need index
-- Need-access gap index
 - Facility Finder with search, filtering, pagination, and CSV export
 - Public backend API
 - API documentation
@@ -60,6 +60,7 @@ Backend:
 - Python
 - Pandas
 - CSV-based data processing
+- RESTful API design
 - Render deployment
 
 Infrastructure:
@@ -120,4 +121,10 @@ This dashboard is useful for:
 
 ## Project Status
 
-V5.0.1 machine-readable project summary added for LLMs, crawlers, search tools, and portfolio reviewers.
+Current Release:
+
+- Frontend: V5.0.0
+- Backend API: v5.0.2
+- Project Summary: V5.0.1
+
+The project is actively maintained as a production-ready healthcare analytics portfolio demonstrating full-stack development, healthcare data analysis, and product-oriented public health intelligence.
