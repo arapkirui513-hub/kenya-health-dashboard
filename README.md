@@ -1,5 +1,7 @@
 ﻿# Kenya Health Facilities Dashboard
 
+> **Status:** Active
+
 ## Healthcare Planning Intelligence for Facility Access, Service Gaps, and Health Need in Kenya
 
 A full-stack healthcare planning intelligence system that transforms Kenyan health facility, population, ownership, service availability, and KDHS 2022 indicator data into county-level planning insights.
